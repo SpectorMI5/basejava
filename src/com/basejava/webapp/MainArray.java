@@ -1,9 +1,13 @@
+package com.basejava.webapp;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import com.basejava.webapp.model.Resume;
+import com.basejava.webapp.storage.ArrayStorage;
 
 /**
- * Interactive test for ArrayStorage implementation
+ * Interactive test for com.basejava.webapp.storage.ArrayStorage implementation
  * (just run, no need to understand)
  */
 public class MainArray {
@@ -32,7 +36,7 @@ public class MainArray {
                     break;
                 case "save":
                     r = new Resume();
-                    r.uuid = uuid;
+                    r.setUuid(uuid);
                     ARRAY_STORAGE.save(r);
                     printAll();
                     break;
@@ -56,7 +60,7 @@ public class MainArray {
         }
     }
 
-    static void printAll() {
+    private static void printAll() {
         Resume[] all = ARRAY_STORAGE.getAll();
         System.out.println("----------------------------");
         if (all.length == 0) {
