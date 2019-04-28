@@ -62,7 +62,7 @@ public class MainArray {
                 case "exit":
                     return;
                 default:
-                    System.out.println("Неверная команда");
+                    System.out.println("Неверная команда!");
                     break;
             }
         }

@@ -25,7 +25,7 @@ public class ArrayStorage {
                 break;
             }
         }
-        if (!b) {
+        if (b) {
             storage[i] = r;
         } else {
             System.out.println("Резюме с uuid = " + r.getUuid() + " нет!");
