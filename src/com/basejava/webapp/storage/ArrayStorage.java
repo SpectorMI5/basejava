@@ -8,7 +8,7 @@ import java.util.Arrays;
  * Array based storage for Resumes
  */
 public class ArrayStorage {
-    private Resume[] storage = new Resume[10000];
+    private Resume[] storage = new Resume[10_000];
     private int size = 0;
 
     public void clear() {
@@ -17,36 +17,33 @@ public class ArrayStorage {
     }
 
     public void update(Resume r) {
-        int i;
-        boolean b = false;
-        for (i = 0; i < size; i++) {
+        for (int i = 0; i < size; i++) {
             if (storage[i].getUuid().equals(r.getUuid())) {
-                b = true;
+                storage[i] = r;
                 break;
             }
-        }
-        if (b) {
-            storage[i] = r;
-        } else {
-            System.out.println("Резюме с uuid = " + r.getUuid() + " нет!");
+            if (i == size - 1) {
+                System.out.println("Резюме с uuid = " + r.getUuid() + " нет!");
+            }
+
         }
     }
 
     public void save(Resume r) {
-        boolean b = false;
-        for (int i = 0; i < size; i++) {
-            if (storage[i].getUuid().equals(r.getUuid())) {
-                b = true;
-                break;
-            }
-        }
-        if (b) {
-            System.out.println("Резюме с uuid = " + r.getUuid() + " уже есть!");
-        } else if (size < 10000) {
-            storage[size] = r;
-            size++;
-        } else {
+        int i;
+        if (size == storage.length) {
             System.out.println("Массив резюме полон!");
+        } else {
+            for (i = 0; i < size; i++) {
+                if (storage[i].getUuid().equals(r.getUuid())) {
+                    System.out.println("Резюме с uuid = " + r.getUuid() + " уже есть!");
+                    break;
+                }
+            }
+            if (i == size) {
+                storage[size] = r;
+                size++;
+            }
         }
     }
 
@@ -61,20 +58,16 @@ public class ArrayStorage {
     }
 
     public void delete(String uuid) {
-        boolean b = false;
         for (int i = 0; i < size; i++) {
             if (storage[i].getUuid().equals(uuid)) {
-                while (storage[i] != null) {
-                    storage[i] = storage[i+1];
-                    i++;
-                }
-                b = true;
+                storage[i] = storage[size - 1];
+                storage[size - 1] = null;
                 size--;
                 break;
             }
-        }
-        if (!b) {
-            System.out.println("Резюме с uuid = " + uuid + " нет!");
+            if (i == size - 1) {
+                System.out.println("Резюме с uuid = " + uuid + " нет!");
+            }
         }
     }
 
