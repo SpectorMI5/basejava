@@ -12,36 +12,69 @@ public class ArrayStorage {
     private int size = 0;
 
     public void clear() {
-        for(int i = 0; i < size; i++) {
-            storage[i] = null;
-        }
+        Arrays.fill(storage, 0, size, null);
         size = 0;
     }
 
+    public void update(Resume r) {
+        int i;
+        boolean b = false;
+        for (i = 0; i < size; i++) {
+            if (storage[i].getUuid().equals(r.getUuid())) {
+                b = true;
+                break;
+            }
+        }
+        if (b) {
+            storage[i] = r;
+        } else {
+            System.out.println("Резюме с uuid = " + r.getUuid() + " нет!");
+        }
+    }
+
     public void save(Resume r) {
-        storage[size] = r;
-        size++;
+        boolean b = false;
+        for (int i = 0; i < size; i++) {
+            if (storage[i].getUuid().equals(r.getUuid())) {
+                b = true;
+                break;
+            }
+        }
+        if (b) {
+            System.out.println("Резюме с uuid = " + r.getUuid() + " уже есть!");
+        } else if (size < 10000) {
+            storage[size] = r;
+            size++;
+        } else {
+            System.out.println("Массив резюме полон!");
+        }
     }
 
     public Resume get(String uuid) {
-        for(int i = 0; i < size; i++) {
-            if(storage[i].getUuid().equals(uuid)) {
+        for (int i = 0; i < size; i++) {
+            if (storage[i].getUuid().equals(uuid)) {
                 return storage[i];
             }
         }
+        System.out.println("Резюме с uuid = " + uuid + " нет!");
         return null;
     }
 
     public void delete(String uuid) {
-        for(int i = 0; i < size; i++) {
-            if(storage[i].getUuid().equals(uuid)) {
-                while(storage[i] != null) {
+        boolean b = false;
+        for (int i = 0; i < size; i++) {
+            if (storage[i].getUuid().equals(uuid)) {
+                while (storage[i] != null) {
                     storage[i] = storage[i+1];
                     i++;
                 }
+                b = true;
                 size--;
                 break;
             }
+        }
+        if (!b) {
+            System.out.println("Резюме с uuid = " + uuid + " нет!");
         }
     }
 
