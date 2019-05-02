@@ -8,7 +8,9 @@ import java.util.Arrays;
  * Array based storage for Resumes
  */
 public class ArrayStorage {
-    private Resume[] storage = new Resume[10_000];
+    private static final int STORAGE_LIMIT = 10_000;
+    private Resume[] storage = new Resume[STORAGE_LIMIT];
+
     private int size = 0;
 
     public void clear() {
@@ -17,8 +19,8 @@ public class ArrayStorage {
     }
 
     public void update(Resume r) {
-        int i = findUuid(r.getUuid());
-        if (i != size) {
+        int i = getIndex(r.getUuid());
+        if (i > -1) {
             storage[i] = r;
         } else {
             System.out.println("Резюме с uuid = " + r.getUuid() + " нет!");
@@ -26,10 +28,10 @@ public class ArrayStorage {
     }
 
     public void save(Resume r) {
-        int i = findUuid(r.getUuid());
-        if (size == storage.length) {
+        int i = getIndex(r.getUuid());
+        if (size == STORAGE_LIMIT) {
             System.out.println("Массив резюме полон!");
-        } else if (i == size) {
+        } else if (i == -1) {
             storage[size] = r;
             size++;
         } else {
@@ -38,8 +40,8 @@ public class ArrayStorage {
     }
 
     public Resume get(String uuid) {
-        int i = findUuid(uuid);
-        if (i != size) {
+        int i = getIndex(uuid);
+        if (i > -1) {
             return storage[i];
         }
         System.out.println("Резюме с uuid = " + uuid + " нет!");
@@ -47,24 +49,14 @@ public class ArrayStorage {
     }
 
     public void delete(String uuid) {
-        int i = findUuid(uuid);
-        if (i != size) {
+        int i = getIndex(uuid);
+        if (i > -1) {
             storage[i] = storage[size - 1];
             storage[size - 1] = null;
             size--;
         } else {
             System.out.println("Резюме с uuid = " + uuid + " нет!");
         }
-    }
-
-    private int findUuid(String uuid) {
-        int i;
-        for (i = 0; i < size; i++) {
-            if (storage[i].getUuid().equals(uuid)) {
-                break;
-            }
-        }
-        return i;
     }
 
     /**
@@ -76,5 +68,14 @@ public class ArrayStorage {
 
     public int size() {
         return size;
+    }
+
+    private int getIndex(String uuid) {
+        for (int i = 0; i < size; i++) {
+            if (storage[i].getUuid().equals(uuid)) {
+                return i;
+            }
+        }
+        return -1;
     }
 }
