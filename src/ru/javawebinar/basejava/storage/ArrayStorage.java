@@ -1,6 +1,6 @@
-package com.basejava.webapp.storage;
+package ru.javawebinar.basejava.storage;
 
-import com.basejava.webapp.model.Resume;
+import ru.javawebinar.basejava.model.Resume;
 
 import java.util.Arrays;
 
@@ -19,42 +19,42 @@ public class ArrayStorage {
     }
 
     public void update(Resume r) {
-        int i = getIndex(r.getUuid());
-        if (i > -1) {
-            storage[i] = r;
+        int index = getIndex(r.getUuid());
+        if (index == -1) {
+            System.out.println("Резюме с id = " + r.getUuid() + " нет!");
         } else {
-            System.out.println("Резюме с uuid = " + r.getUuid() + " нет!");
+            storage[index] = r;
         }
     }
 
     public void save(Resume r) {
         if (size == STORAGE_LIMIT) {
             System.out.println("Массив резюме полон!");
-        } else if (getIndex(r.getUuid()) == -1) {
+        } else if (getIndex(r.getUuid()) > -1) {
+            System.out.println("Резюме с id = " + r.getUuid() + " уже есть!");
+        } else {
             storage[size] = r;
             size++;
-        } else {
-            System.out.println("Резюме с uuid = " + r.getUuid() + " уже есть!");
         }
     }
 
     public Resume get(String uuid) {
-        int i = getIndex(uuid);
-        if (i > -1) {
-            return storage[i];
+        int index = getIndex(uuid);
+        if (index == -1) {
+            System.out.println("Резюме с id = " + uuid + " нет!");
+            return null;
         }
-        System.out.println("Резюме с uuid = " + uuid + " нет!");
-        return null;
+        return storage[index];
     }
 
     public void delete(String uuid) {
-        int i = getIndex(uuid);
-        if (i > -1) {
-            storage[i] = storage[size - 1];
+        int index = getIndex(uuid);
+        if (index == -1) {
+            System.out.println("Резюме с id = " + uuid + " нет!");
+        } else {
+            storage[index] = storage[size - 1];
             storage[size - 1] = null;
             size--;
-        } else {
-            System.out.println("Резюме с uuid = " + uuid + " нет!");
         }
     }
 
@@ -71,7 +71,7 @@ public class ArrayStorage {
 
     private int getIndex(String uuid) {
         for (int i = 0; i < size; i++) {
-            if (storage[i].getUuid().equals(uuid)) {
+            if ((storage[i].getUuid()).equals(uuid)) {
                 return i;
             }
         }
