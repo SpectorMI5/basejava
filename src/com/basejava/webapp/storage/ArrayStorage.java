@@ -28,10 +28,9 @@ public class ArrayStorage {
     }
 
     public void save(Resume r) {
-        int i = getIndex(r.getUuid());
         if (size == STORAGE_LIMIT) {
             System.out.println("Массив резюме полон!");
-        } else if (i == -1) {
+        } else if (getIndex(r.getUuid()) == -1) {
             storage[size] = r;
             size++;
         } else {
