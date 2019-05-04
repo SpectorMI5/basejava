@@ -6,29 +6,25 @@ import java.util.Arrays;
 
 public class SortedArrayStorage extends AbstractArrayStorage {
 
-    public void clear() {
-
-    }
-
-    public void update(Resume r) {
-
-    }
-
-    public void save(Resume r) {
-
-    }
-
-    public void delete(String uuid) {
-
-    }
-
-    public Resume[] getAll() {
-        return new Resume[0];
-    }
-
     protected int getIndex(String uuid) {
         Resume searchKey = new Resume();
         searchKey.setUuid(uuid);
         return Arrays.binarySearch(storage, 0, size, searchKey);
+    }
+
+    protected void sortingStorage() {
+        boolean isSorted = false;
+        Resume buf;
+        while (!isSorted) {
+            isSorted = true;
+            for (int i = 1; i < size; i++) {
+                if ((storage[i].getUuid()).compareTo(storage[i - 1].getUuid()) < 0) {
+                    isSorted = false;
+                    buf = storage[i];
+                    storage[i] = storage[i - 1];
+                    storage[i - 1] = buf;
+                }
+            }
+        }
     }
 }
