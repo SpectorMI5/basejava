@@ -71,5 +71,5 @@ public abstract class AbstractArrayStorage implements Storage {
 
     protected abstract void saveResume(Resume r, int index);
 
-    protected abstract void deleteResume(int i);
+    protected abstract void deleteResume(int index);
 }
