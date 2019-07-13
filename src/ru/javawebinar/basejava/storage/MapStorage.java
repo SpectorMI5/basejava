@@ -1,15 +1,57 @@
 package ru.javawebinar.basejava.storage;
 
+import ru.javawebinar.basejava.exception.ExistStorageException;
+import ru.javawebinar.basejava.exception.NotExistStorageException;
 import ru.javawebinar.basejava.model.Resume;
 
 import java.util.HashMap;
 
 public class MapStorage extends AbstractStorage {
-    private HashMap<Integer, Resume> map = new HashMap<>();
+    private HashMap<String, Resume> map = new HashMap<>();
 
     @Override
     public void clear() {
         map.clear();
+    }
+
+    @Override
+    public void update(Resume r) {
+        boolean containsResume = containsResume(r);
+        if (!containsResume) {
+            throw new NotExistStorageException(r.getUuid());
+        } else {
+            map.replace(r.getUuid(), r);
+        }
+    }
+
+    @Override
+    public void save(Resume r) {
+        boolean containsResume = containsResume(r);
+        if (containsResume) {
+            throw new ExistStorageException(r.getUuid());
+        } else {
+            map.put(r.getUuid(), r);
+        }
+    }
+
+    @Override
+    public Resume get(String uuid) {
+        Resume r = searchResume(uuid);
+        if (r == null) {
+            throw new NotExistStorageException(uuid);
+        } else {
+            return r;
+        }
+    }
+
+    @Override
+    public void delete(String uuid) {
+        Resume r = searchResume(uuid);
+        if (r == null) {
+            throw new NotExistStorageException(uuid);
+        } else {
+            map.remove(uuid, r);
+        }
     }
 
     @Override
@@ -22,34 +64,38 @@ public class MapStorage extends AbstractStorage {
         return map.size();
     }
 
-    @Override
-    protected int getIndex(String uuid) {
-        for (HashMap.Entry<Integer, Resume> item : map.entrySet()) {
+    private boolean containsResume(Resume r) {
+        return map.containsValue(r);
+    }
+
+    private Resume searchResume(String uuid) {
+        for (HashMap.Entry<String, Resume> item : map.entrySet()) {
             if (uuid.equals(item.getValue().getUuid())) {
-                return item.getKey();
+                return item.getValue();
             }
         }
-        return -1;
+        return null;
+    }
+
+    @Override
+    protected int getIndex(String uuid) {
+        return 0;
     }
 
     @Override
     protected void updateResume(Resume r, int index) {
-        map.replace(index, r);
     }
 
     @Override
     protected void saveResume(Resume r, int index) {
-        index = Integer.parseInt(r.getUuid());
-        map.put(index, r);
     }
 
     @Override
     protected Resume getResume(int index) {
-        return map.get(index);
+        return null;
     }
 
     @Override
     protected void deleteResume(int index) {
-        map.remove(index);
     }
 }
