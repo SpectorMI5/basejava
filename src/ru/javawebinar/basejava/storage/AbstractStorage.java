@@ -10,37 +10,37 @@ import ru.javawebinar.basejava.model.Resume;
 public abstract class AbstractStorage implements Storage {
 
     public void update(Resume r) {
-        int index = getIndex(r.getUuid());
-        if (index < 0) {
+        String index = getIndex(r.getUuid());
+        if (!checkIndex(index)) {
             throw new NotExistStorageException(r.getUuid());
         } else {
-            updateResume(r, index);
+            updateResume(index, r);
         }
     }
 
     public void save(Resume r) {
-        int index = getIndex(r.getUuid());
-        if (index > -1) {
+        String index = getIndex(r.getUuid());
+        if (checkIndex(index)) {
             throw new ExistStorageException(r.getUuid());
         } else {
-            saveResume(r, index);
+            saveResume(index, r);
         }
     }
 
     public Resume get(String uuid) {
-        int index = getIndex(uuid);
-        if (index < 0) {
+        String index = getIndex(uuid);
+        if (!checkIndex(index)) {
             throw new NotExistStorageException(uuid);
         }
-        return getResume(index);
+        return getResume(index, uuid);
     }
 
     public void delete(String uuid) {
-        int index = getIndex(uuid);
-        if (index < 0) {
+        String index = getIndex(uuid);
+        if (!checkIndex(index)) {
             throw new NotExistStorageException(uuid);
         } else {
-            deleteResume(index);
+            deleteResume(index, uuid);
         }
     }
 
@@ -50,13 +50,15 @@ public abstract class AbstractStorage implements Storage {
 
     public abstract int size();
 
-    protected abstract int getIndex(String uuid);
+    protected abstract void updateResume(String index, Resume r);
 
-    protected abstract void updateResume(Resume r, int index);
+    protected abstract void saveResume(String index, Resume r);
 
-    protected abstract void saveResume(Resume r, int index);
+    protected abstract Resume getResume(String index, String uuid);
 
-    protected abstract Resume getResume(int index);
+    protected abstract void deleteResume(String index, String uuid);
 
-    protected abstract void deleteResume(int index);
+    protected abstract String getIndex(String uuid);
+
+    protected abstract boolean checkIndex(String index);
 }
