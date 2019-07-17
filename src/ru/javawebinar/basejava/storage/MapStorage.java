@@ -25,7 +25,7 @@ public class MapStorage extends AbstractStorage {
 
     @Override
     protected void updateResume(String index, Resume r) {
-        map.replace(r.getUuid(), r);
+        map.replace(index, r);
     }
 
     @Override
@@ -34,27 +34,22 @@ public class MapStorage extends AbstractStorage {
     }
 
     @Override
-    protected Resume getResume(String index, String uuid) {
-        return map.get(uuid);
+    protected Resume getResume(String index) {
+        return map.get(index);
     }
 
     @Override
-    protected void deleteResume(String index, String uuid) {
-        map.remove(uuid);
+    protected void deleteResume(String index) {
+        map.remove(index);
     }
 
     @Override
     protected String getIndex(String uuid) {
-        for (HashMap.Entry<String, Resume> item : map.entrySet()) {
-            if (uuid.equals(item.getKey())) {
-                return item.getKey();
-            }
-        }
-        return "-1";
+        return uuid;
     }
 
     @Override
     protected boolean checkIndex(String index) {
-        return !index.equals("-1");
+        return map.containsKey(index);
     }
 }

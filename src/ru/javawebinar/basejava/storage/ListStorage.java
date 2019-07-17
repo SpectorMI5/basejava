@@ -3,9 +3,10 @@ package ru.javawebinar.basejava.storage;
 import ru.javawebinar.basejava.model.Resume;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class ListStorage extends AbstractStorage {
-    private ArrayList<Resume> list = new ArrayList<>();
+    private List<Resume> list = new ArrayList<>();
 
     @Override
     public void clear() {
@@ -33,12 +34,12 @@ public class ListStorage extends AbstractStorage {
     }
 
     @Override
-    protected Resume getResume(String index, String uuid) {
+    protected Resume getResume(String index) {
         return list.get(Integer.parseInt(index));
     }
 
     @Override
-    protected void deleteResume(String index, String uuid) {
+    protected void deleteResume(String index) {
         list.remove(Integer.parseInt(index));
     }
 

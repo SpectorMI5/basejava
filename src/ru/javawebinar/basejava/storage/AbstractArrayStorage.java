@@ -46,15 +46,20 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
     }
 
     @Override
-    protected Resume getResume(String index, String uuid) {
+    protected Resume getResume(String index) {
         return storage[Integer.parseInt(index)];
     }
 
     @Override
-    protected void deleteResume(String index, String uuid) {
+    protected void deleteResume(String index) {
         deleteResumeInArray(Integer.parseInt(index));
         storage[size - 1] = null;
         size--;
+    }
+
+    @Override
+    protected boolean checkIndex(String index) {
+        return !(Integer.parseInt(index) < 0);
     }
 
     protected abstract void saveResumeInArray(int index, Resume r);
@@ -62,6 +67,4 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
     protected abstract void deleteResumeInArray(int i);
 
     protected abstract String getIndex(String uuid);
-
-    protected abstract boolean checkIndex(String index);
 }
