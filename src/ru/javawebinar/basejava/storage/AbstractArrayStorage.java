@@ -31,40 +31,40 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
     }
 
     @Override
-    protected void updateResume(String index, Resume r) {
-        storage[Integer.parseInt(index)] = r;
+    protected void updateResume(Object index, Resume r) {
+        storage[(Integer) index] = r;
     }
 
     @Override
-    public void saveResume(String index, Resume r) {
+    public void saveResume(Object index, Resume r) {
         if (size == STORAGE_LIMIT) {
             throw new StorageException("Storage overflow", r.getUuid());
         } else {
-            saveResumeInArray(Integer.parseInt(index), r);
+            saveResumeInArray((Integer) index, r);
             size++;
         }
     }
 
     @Override
-    protected Resume getResume(String index) {
-        return storage[Integer.parseInt(index)];
+    protected Resume getResume(Object index) {
+        return storage[(Integer) index];
     }
 
     @Override
-    protected void deleteResume(String index) {
-        deleteResumeInArray(Integer.parseInt(index));
+    protected void deleteResume(Object index) {
+        deleteResumeInArray((Integer) index);
         storage[size - 1] = null;
         size--;
     }
 
     @Override
-    protected boolean checkIndex(String index) {
-        return !(Integer.parseInt(index) < 0);
+    protected boolean checkIndex(Object index) {
+        return ((Integer) index < 0);
     }
 
     protected abstract void saveResumeInArray(int index, Resume r);
 
-    protected abstract void deleteResumeInArray(int i);
+    protected abstract void deleteResumeInArray(int index);
 
-    protected abstract String getIndex(String uuid);
+    protected abstract Integer getIndex(String uuid);
 }

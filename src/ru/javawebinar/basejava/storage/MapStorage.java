@@ -24,22 +24,22 @@ public class MapStorage extends AbstractStorage {
     }
 
     @Override
-    protected void updateResume(String index, Resume r) {
-        map.replace(index, r);
+    protected void updateResume(Object index, Resume r) {
+        map.replace((String) index, r);
     }
 
     @Override
-    protected void saveResume(String index, Resume r) {
+    protected void saveResume(Object index, Resume r) {
         map.put(r.getUuid(), r);
     }
 
     @Override
-    protected Resume getResume(String index) {
+    protected Resume getResume(Object index) {
         return map.get(index);
     }
 
     @Override
-    protected void deleteResume(String index) {
+    protected void deleteResume(Object index) {
         map.remove(index);
     }
 
@@ -49,7 +49,7 @@ public class MapStorage extends AbstractStorage {
     }
 
     @Override
-    protected boolean checkIndex(String index) {
-        return map.containsKey(index);
+    protected boolean checkIndex(Object index) {
+        return !map.containsKey(index);
     }
 }
