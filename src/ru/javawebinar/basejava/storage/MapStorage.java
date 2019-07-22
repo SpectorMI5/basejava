@@ -2,7 +2,9 @@ package ru.javawebinar.basejava.storage;
 
 import ru.javawebinar.basejava.model.Resume;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class MapStorage extends AbstractStorage {
@@ -11,11 +13,6 @@ public class MapStorage extends AbstractStorage {
     @Override
     public void clear() {
         map.clear();
-    }
-
-    @Override
-    public Resume[] getAll() {
-        return map.values().toArray(new Resume[map.size()]);
     }
 
     @Override
@@ -41,6 +38,11 @@ public class MapStorage extends AbstractStorage {
     @Override
     protected void deleteResume(Object index) {
         map.remove(index);
+    }
+
+    @Override
+    protected List<Resume> getAll() {
+        return Arrays.asList(map.values().toArray(new Resume[map.size()]));
     }
 
     @Override

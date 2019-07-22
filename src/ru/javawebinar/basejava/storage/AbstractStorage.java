@@ -4,6 +4,9 @@ import ru.javawebinar.basejava.exception.ExistStorageException;
 import ru.javawebinar.basejava.exception.NotExistStorageException;
 import ru.javawebinar.basejava.model.Resume;
 
+import java.util.Comparator;
+import java.util.List;
+
 /**
  * Collection based storage for Resumes
  */
@@ -44,9 +47,14 @@ public abstract class AbstractStorage implements Storage {
         }
     }
 
-    public abstract void clear();
+    public List<Resume> getAllSorted() {
+        List<Resume> list = getAll();
+        list.sort(Comparator.comparing(Resume::getFullName));
+        return list;
+    }
 
-    public abstract Resume[] getAll();
+
+    public abstract void clear();
 
     public abstract int size();
 
@@ -57,6 +65,8 @@ public abstract class AbstractStorage implements Storage {
     protected abstract Resume getResume(Object index);
 
     protected abstract void deleteResume(Object index);
+
+    protected abstract List<Resume> getAll();
 
     protected abstract Object getIndex(String uuid);
 
