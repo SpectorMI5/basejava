@@ -24,9 +24,9 @@ public abstract class AbstractStorageTest {
     private static final Resume RESUME_4;
 
     static {
-        RESUME_1 = new Resume(UUID_1, "fullName1");
+        RESUME_1 = new Resume(UUID_1, "fullName3");
         RESUME_2 = new Resume(UUID_2, "fullName2");
-        RESUME_3 = new Resume(UUID_3, "fullName3");
+        RESUME_3 = new Resume(UUID_3, "fullName1");
         RESUME_4 = new Resume(UUID_4, "fullName4");
     }
 
@@ -67,11 +67,11 @@ public abstract class AbstractStorageTest {
 
     @Test
     public void getAllSorted() throws Exception {
-        List<Resume> storageTest = storage.getAllSorted();
-        assertEquals(3, storageTest.size());
-//        assertEquals(storageTest[0], RESUME_1);
-//        assertEquals(storageTest[1], RESUME_2);
-//        assertEquals(storageTest[2], RESUME_3);
+        List<Resume> list = storage.getAllSorted();
+        assertEquals(3, list.size());
+        assertEquals(list.get(0), RESUME_3);
+        assertEquals(list.get(1), RESUME_2);
+        assertEquals(list.get(2), RESUME_1);
     }
 
     @Test
