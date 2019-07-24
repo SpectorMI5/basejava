@@ -12,64 +12,64 @@ import java.util.List;
  */
 public abstract class AbstractStorage implements Storage {
 
-    public void update(Resume r) {
-        Object index = getIndex(r.getUuid());
-        if (checkIndex(index)) {
-            throw new NotExistStorageException(r.getUuid());
-        } else {
-            updateResume(index, r);
-        }
+    @Override
+    public void update(Resume resume) {
+        Object searchKey = getContainsSearchKey(resume.getUuid());
+        updateResume(searchKey, resume);
     }
 
-    public void save(Resume r) {
-        Object index = getIndex(r.getUuid());
-        if (!checkIndex(index)) {
-            throw new ExistStorageException(r.getUuid());
-        } else {
-            saveResume(index, r);
-        }
+    @Override
+    public void save(Resume resume) {
+        Object searchKey = getNotContainsSearchKey(resume.getUuid());
+        saveResume(searchKey, resume);
     }
 
+    @Override
     public Resume get(String uuid) {
-        Object index = getIndex(uuid);
-        if (checkIndex(index)) {
-            throw new NotExistStorageException(uuid);
-        }
-        return getResume(index);
+        Object searchKey = getContainsSearchKey(uuid);
+        return getResume(searchKey);
     }
 
+    @Override
     public void delete(String uuid) {
-        Object index = getIndex(uuid);
-        if (checkIndex(index)) {
-            throw new NotExistStorageException(uuid);
-        } else {
-            deleteResume(index);
-        }
+        Object searchKey = getContainsSearchKey(uuid);
+        deleteResume(searchKey);
     }
 
+    @Override
     public List<Resume> getAllSorted() {
-        List<Resume> list = getAll();
-        list.sort(Comparator.comparing(Resume::getUuid));
-        list.sort(Comparator.comparing(Resume::getFullName));
-        return list;
+        List<Resume> resumes = getAll();
+        resumes.sort(Comparator.comparing(Resume::getFullName).thenComparing(Resume::getUuid));
+        return resumes;
     }
 
+    private Object getContainsSearchKey(String uuid) {
+        Object searchKey = getSearchKey(uuid);
+        if (checkSearchKey(searchKey)) {
+            throw new NotExistStorageException(uuid);
+        }
+        return searchKey;
+    }
 
-    public abstract void clear();
+    private Object getNotContainsSearchKey(String uuid) {
+        Object searchKey = getSearchKey(uuid);
+        if (!checkSearchKey(searchKey)) {
+            throw new ExistStorageException(uuid);
+        }
+        return searchKey;
+    }
 
-    public abstract int size();
+    protected abstract void updateResume(Object searchKey, Resume resume);
 
-    protected abstract void updateResume(Object index, Resume r);
+    protected abstract void saveResume(Object searchKey, Resume resume);
 
-    protected abstract void saveResume(Object index, Resume r);
+    protected abstract Resume getResume(Object searchKey);
 
-    protected abstract Resume getResume(Object index);
-
-    protected abstract void deleteResume(Object index);
+    protected abstract void deleteResume(Object searchKey);
 
     protected abstract List<Resume> getAll();
 
-    protected abstract Object getIndex(String uuid);
+    protected abstract Object getSearchKey(String uuid);
 
-    protected abstract boolean checkIndex(Object index);
+    protected abstract boolean checkSearchKey(Object searchKey);
 }

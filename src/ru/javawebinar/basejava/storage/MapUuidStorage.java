@@ -2,10 +2,7 @@ package ru.javawebinar.basejava.storage;
 
 import ru.javawebinar.basejava.model.Resume;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class MapUuidStorage extends AbstractStorage {
     private Map<String, Resume> map = new HashMap<>();
@@ -21,37 +18,37 @@ public class MapUuidStorage extends AbstractStorage {
     }
 
     @Override
-    protected void updateResume(Object index, Resume r) {
-        map.replace((String) index, r);
+    protected void updateResume(Object key, Resume resume) {
+        map.replace((String) key, resume);
     }
 
     @Override
-    protected void saveResume(Object index, Resume r) {
-        map.put(r.getUuid(), r);
+    protected void saveResume(Object key, Resume resume) {
+        map.put(resume.getUuid(), resume);
     }
 
     @Override
-    protected Resume getResume(Object index) {
-        return map.get(index);
+    protected Resume getResume(Object key) {
+        return map.get(key);
     }
 
     @Override
-    protected void deleteResume(Object index) {
-        map.remove(index);
+    protected void deleteResume(Object key) {
+        map.remove(key);
     }
 
     @Override
     protected List<Resume> getAll() {
-        return Arrays.asList(map.values().toArray(new Resume[map.size()]));
+        return new ArrayList<>(map.values());
     }
 
     @Override
-    protected String getIndex(String uuid) {
+    protected String getSearchKey(String uuid) {
         return uuid;
     }
 
     @Override
-    protected boolean checkIndex(Object index) {
-        return !map.containsKey(index);
+    protected boolean checkSearchKey(Object key) {
+        return !map.containsKey(key);
     }
 }

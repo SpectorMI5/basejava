@@ -19,13 +19,13 @@ public class ListStorage extends AbstractStorage {
     }
 
     @Override
-    protected void updateResume(Object index, Resume r) {
-        list.set((Integer) index, r);
+    protected void updateResume(Object index, Resume resume) {
+        list.set((Integer) index, resume);
     }
 
     @Override
-    protected void saveResume(Object index, Resume r) {
-        list.add(r);
+    protected void saveResume(Object index, Resume resume) {
+        list.add(resume);
     }
 
     @Override
@@ -40,11 +40,11 @@ public class ListStorage extends AbstractStorage {
 
     @Override
     protected List<Resume> getAll() {
-        return list;
+        return new ArrayList<>(list);
     }
 
     @Override
-    protected Integer getIndex(String uuid) {
+    protected Integer getSearchKey(String uuid) {
         for (int i = 0; i < list.size(); i++) {
             if (uuid.equals(list.get(i).getUuid())) {
                 return i;
@@ -54,7 +54,7 @@ public class ListStorage extends AbstractStorage {
     }
 
     @Override
-    protected boolean checkIndex(Object index) {
+    protected boolean checkSearchKey(Object index) {
         return index.equals(-1);
     }
 }
