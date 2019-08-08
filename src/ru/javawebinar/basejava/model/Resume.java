@@ -1,5 +1,7 @@
 package ru.javawebinar.basejava.model;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -9,6 +11,12 @@ public class Resume {
     private final String uuid;
 
     private final String fullName;
+
+    private final Contacts fields = new Contacts();
+
+    private final Map<String, String> contacts = new HashMap<>();
+
+    private final Map<SectionType, Section> sections = new HashMap<>();
 
     public Resume(String fullName) {
         this(UUID.randomUUID().toString(), fullName);
@@ -27,6 +35,26 @@ public class Resume {
 
     public String getFullName() {
         return fullName;
+    }
+
+    public void addContact(String contact) {
+        String[] splitContact = contact.split(" ");
+        String contactType = splitContact[0];
+        contacts.put(contactType, contact);
+        fields.addContact(contact);
+    }
+
+    public String getContact(String contactType) {
+        return contacts.get(contactType);
+    }
+
+    public void printResume() {
+        fields.printContacts();
+        System.out.println(sections.toString());
+    }
+
+    public void addSection(SectionType sectionType, Section section) {
+        sections.put(sectionType, section);
     }
 
     @Override
