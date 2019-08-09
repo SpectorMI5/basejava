@@ -1,14 +1,37 @@
 package ru.javawebinar.basejava.model;
 
-public class OrganizationSection extends Section {
-    private String blockHeader;
-    private String yearMonth;
-    private String textField;
+import java.util.ArrayList;
+import java.util.List;
 
-    public OrganizationSection(String titleOfSection, String blockHeader, String yearMonth, String textField) {
+public class OrganizationSection extends AbstractSection {
+    private final List<Organization> organizations;
+
+    public OrganizationSection(String titleOfSection, ArrayList<Organization> organizations) {
         this.titleOfSection = titleOfSection;
-        this.blockHeader = blockHeader;
-        this.yearMonth = yearMonth;
-        this.textField = textField;
+        this.organizations = organizations;
+    }
+
+    public List<Organization> getOrganizations() {
+        return organizations;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        OrganizationSection that = (OrganizationSection) o;
+
+        return organizations.equals(that.organizations);
+    }
+
+    @Override
+    public int hashCode() {
+        return organizations.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return titleOfSection + organizations;
     }
 }

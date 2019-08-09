@@ -12,11 +12,9 @@ public class Resume {
 
     private final String fullName;
 
-    private final Contacts fields = new Contacts();
+    private final Map<String, Contact> contacts = new HashMap<>();
 
-    private final Map<String, String> contacts = new HashMap<>();
-
-    private final Map<SectionType, Section> sections = new HashMap<>();
+    private final Map<SectionType, AbstractSection> sections = new HashMap<>();
 
     public Resume(String fullName) {
         this(UUID.randomUUID().toString(), fullName);
@@ -29,6 +27,14 @@ public class Resume {
         this.fullName = fullName;
     }
 
+    public Contact getContact(String contactType) {
+        return contacts.get(contactType);
+    }
+
+    public AbstractSection getSection(SectionType sectionType) {
+        return sections.get(sectionType);
+    }
+
     public String getUuid() {
         return uuid;
     }
@@ -37,24 +43,19 @@ public class Resume {
         return fullName;
     }
 
-    public void addContact(String contact) {
-        String[] splitContact = contact.split(" ");
+    public void addContact(Contact contact) {
+        String[] splitContact = contact.getContact().split(" ");
         String contactType = splitContact[0];
         contacts.put(contactType, contact);
-        fields.addContact(contact);
     }
 
-    public String getContact(String contactType) {
-        return contacts.get(contactType);
+    public void addSection(SectionType sectionType, AbstractSection section) {
+        sections.put(sectionType, section);
     }
 
     public void printResume() {
-        fields.printContacts();
+        System.out.println(contacts.toString());
         System.out.println(sections.toString());
-    }
-
-    public void addSection(SectionType sectionType, Section section) {
-        sections.put(sectionType, section);
     }
 
     @Override
@@ -65,13 +66,17 @@ public class Resume {
         Resume resume = (Resume) o;
 
         if (!uuid.equals(resume.uuid)) return false;
-        return fullName.equals(resume.fullName);
+        if (!fullName.equals(resume.fullName)) return false;
+        if (!contacts.equals(resume.contacts)) return false;
+        return sections.equals(resume.sections);
     }
 
     @Override
     public int hashCode() {
         int result = uuid.hashCode();
         result = 31 * result + fullName.hashCode();
+        result = 31 * result + contacts.hashCode();
+        result = 31 * result + sections.hashCode();
         return result;
     }
 
