@@ -29,6 +29,6 @@ public class SimpleTextSection extends AbstractSection {
 
     @Override
     public String toString() {
-        return titleOfSection + "\n" + text;
+        return "\n\n" + titleOfSection + "\n" + text;
     }
 }
