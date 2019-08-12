@@ -37,18 +37,20 @@ public class ResumeTestData {
                 qualificationsList);
 
         String organizationName_1 = "Java Online Projects";
+        String url_1 = "http://javaops.ru/";
         YearMonth startDate_1 = YearMonth.of(2013, 10);
         YearMonth endDate_1 = YearMonth.of(2019, 8);
-        String text_5 = "Автор проекта.\nСоздание, организация и проведение Java онлайн проектов и стажировок.";
-        Organization organization_1 = new Organization(organizationName_1, startDate_1,
-                endDate_1, text_5);
+        String title_1 = "Автор проекта.";
+        String description_1 = "Создание, организация и проведение Java онлайн проектов и стажировок.";
+        Organization organization_1 = new Organization(organizationName_1, url_1, startDate_1, endDate_1, title_1, description_1);
 
         String organizationName_2 = "Wrike";
+        String url_2 = "https://www.wrike.com/";
         YearMonth startDate_2 = YearMonth.of(2014, 10);
         YearMonth endDate_2 = YearMonth.of(2016, 1);
-        String text_6 = "Старший разработчик (backend)\nПроектирование и разработка онлайн платформы управления проектами Wrike";
-        Organization organization_2 = new Organization(organizationName_2, startDate_2,
-                endDate_2, text_6);
+        String title_2 = "Старший разработчик (backend)";
+        String description_2 = "Проектирование и разработка онлайн платформы управления проектами Wrike";
+        Organization organization_2 = new Organization(organizationName_2, url_2, startDate_2, endDate_2, title_2, description_2);
 
         ArrayList<Organization> organizationList_1 = new ArrayList<>(Arrays.asList(organization_1,
                 organization_2));
@@ -56,18 +58,21 @@ public class ResumeTestData {
                 organizationList_1);
 
         String organizationName_3 = "Coursera";
+        String url_3 = "https://www.coursera.org/learn/progfun1";
         YearMonth startDate_3 = YearMonth.of(2013, 3);
         YearMonth endDate_3 = YearMonth.of(2013, 5);
-        String text_7 = "\"Functional Programming Principles in Scala\" by Martin Odersky";
-        Organization organization_3 = new Organization(organizationName_3, startDate_3,
-                endDate_3, text_7);
+        String title_3 = "\"Functional Programming Principles in Scala\" by Martin Odersky";
+        Organization organization_3 = new Organization(organizationName_3, url_3, startDate_3,
+                endDate_3, title_3, "");
 
         String organizationName_4 = "Luxoft";
+        String url_4 = "https://www.luxoft-training.ru/kurs/obektno-orientirovannyy__analiz_is_kontseptualnoe_modelirovanie_na_uml" +
+                "_dlya_sistemnyh_analitikov_.html";
         YearMonth startDate_4 = YearMonth.of(2011, 3);
         YearMonth endDate_4 = YearMonth.of(2011, 4);
-        String text_8 = "Курс \"Объектно-ориентированный анализ ИС. Концептуальное моделирование на UML.\"";
-        Organization organization_4 = new Organization(organizationName_4, startDate_4,
-                endDate_4, text_8);
+        String title_4 = "Курс \"Объектно-ориентированный анализ ИС. Концептуальное моделирование на UML.\"";
+        Organization organization_4 = new Organization(organizationName_4, url_4, startDate_4,
+                endDate_4, title_4, "");
 
         ArrayList<Organization> organizationList_2 = new ArrayList<>(Arrays.asList(organization_3,
                 organization_4));

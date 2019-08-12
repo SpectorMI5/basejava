@@ -1,9 +1,12 @@
 package ru.javawebinar.basejava.model;
 
+import java.util.Objects;
+
 public class SimpleTextSection extends AbstractSection {
     private String text;
 
     public SimpleTextSection(String titleOfSection, String text) {
+        Objects.requireNonNull(text, "text must not be null");
         this.titleOfSection = titleOfSection;
         this.text = text;
     }

@@ -2,11 +2,13 @@ package ru.javawebinar.basejava.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class MarkedListSection extends AbstractSection {
     private List<String> text;
 
     public MarkedListSection(String titleOfSection, ArrayList<String> text) {
+        Objects.requireNonNull(text, "text must not be null");
         this.titleOfSection = titleOfSection;
         this.text = text;
     }
