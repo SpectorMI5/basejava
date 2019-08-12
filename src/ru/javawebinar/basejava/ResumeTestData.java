@@ -12,9 +12,7 @@ import static ru.javawebinar.basejava.model.SectionType.*;
 public class ResumeTestData {
 
     public static void main(String[] args) {
-        String UUID_1 = "uuid1";
-        Resume RESUME_1;
-        RESUME_1 = new Resume(UUID_1, "fullName3");
+        Resume resume = new Resume("uuid1", "fullName1");
 
         Contact phoneNumber = new Contact("+7(921)855-04-82");
         Contact skype = new Contact("grigory.kislin");
@@ -76,22 +74,22 @@ public class ResumeTestData {
         AbstractSection education = new OrganizationSection("Образование",
                 organizationList_2);
 
-        RESUME_1.addContact(PHONE_NUMBER, phoneNumber);
-        RESUME_1.addContact(SKYPE, skype);
-        RESUME_1.addContact(EMAIL, email);
+        resume.addContact(PHONE_NUMBER, phoneNumber);
+        resume.addContact(SKYPE, skype);
+        resume.addContact(EMAIL, email);
 
-        RESUME_1.addSection(OBJECTIVE, objective);
-        RESUME_1.addSection(PERSONAL, personal);
-        RESUME_1.addSection(ACHIEVEMENT, achievement);
-        RESUME_1.addSection(QUALIFICATIONS, qualifications);
-        RESUME_1.addSection(EXPERIENCE, experience);
-        RESUME_1.addSection(EDUCATION, education);
+        resume.addSection(OBJECTIVE, objective);
+        resume.addSection(PERSONAL, personal);
+        resume.addSection(ACHIEVEMENT, achievement);
+        resume.addSection(QUALIFICATIONS, qualifications);
+        resume.addSection(EXPERIENCE, experience);
+        resume.addSection(EDUCATION, education);
 
-        System.out.println("Skype: " + RESUME_1.getContact(SKYPE));
-        System.out.println(RESUME_1.getSection(PERSONAL));
-        System.out.println(RESUME_1.getSection(QUALIFICATIONS));
-        System.out.println(RESUME_1.getSection(EDUCATION));
+        System.out.println("Skype: " + resume.getContact(SKYPE));
+        System.out.println(resume.getSection(PERSONAL));
+        System.out.println(resume.getSection(QUALIFICATIONS));
+        System.out.println(resume.getSection(EDUCATION));
 
-        RESUME_1.printResume();
+        resume.printResume();
     }
 }
