@@ -48,7 +48,7 @@ public class MapResumeStorage extends AbstractStorage<Resume> {
     }
 
     @Override
-    protected boolean checkSearchKey(Resume resume) {
-        return !map.containsValue(resume);
+    protected boolean isExist(Resume resume) {
+        return map.containsValue(resume);
     }
 }

@@ -59,8 +59,8 @@ public abstract class AbstractArrayStorage extends AbstractStorage<Integer> {
     }
 
     @Override
-    protected boolean checkSearchKey(Integer index) {
-        return (index < 0);
+    protected boolean isExist(Integer index) {
+        return !(index < 0);
     }
 
     protected abstract void saveResumeInArray(int index, Resume resume);

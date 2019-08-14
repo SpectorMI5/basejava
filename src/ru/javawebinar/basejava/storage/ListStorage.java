@@ -54,7 +54,7 @@ public class ListStorage extends AbstractStorage<Integer> {
     }
 
     @Override
-    protected boolean checkSearchKey(Integer index) {
-        return index.equals(-1);
+    protected boolean isExist(Integer index) {
+        return !index.equals(-1);
     }
 }
