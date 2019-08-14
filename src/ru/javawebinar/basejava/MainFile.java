@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 
 public class MainFile {
+
     public static void main(String[] args) {
         String filePath = ".\\.gitignore";
 
@@ -28,6 +29,29 @@ public class MainFile {
             System.out.println(fis.read());
         } catch (IOException e) {
             throw new RuntimeException(e);
+        }
+
+        System.out.println("----------------------------");
+        printFileNames(".");
+    }
+
+    private static void printFileNames(String path) {
+        File dir = new File(path);
+        String[] list = dir.list();
+
+        if (list != null) {
+            for (String name : list) {
+                File file = new File(path + "\\" + name);
+                if (file.isDirectory()) {
+                    try {
+                        printFileNames(file.getCanonicalPath());
+                    } catch (IOException e) {
+                        throw new RuntimeException("Error", e);
+                    }
+                } else {
+                    System.out.println(name);
+                }
+            }
         }
     }
 }
