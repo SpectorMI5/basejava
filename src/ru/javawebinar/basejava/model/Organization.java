@@ -1,11 +1,14 @@
 package ru.javawebinar.basejava.model;
 
+import java.io.Serializable;
 import java.time.YearMonth;
 import java.util.*;
 
 import static ru.javawebinar.basejava.util.DateUtil.NOW;
 
-public class Organization {
+public class Organization implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private final Link homePage;
     private final List<OrganizationPeriod> organizationPeriods;
 
@@ -45,7 +48,7 @@ public class Organization {
         return "\n" + homePage + "\n" + organizationPeriods;
     }
 
-    public static class OrganizationPeriod {
+    public static class OrganizationPeriod implements Serializable {
         private final YearMonth startDate;
         private final YearMonth endDate;
         private final String title;
