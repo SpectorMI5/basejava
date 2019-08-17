@@ -32,24 +32,20 @@ public class MainFile {
         }
 
         System.out.println("----------------------------");
-        printFileNames(".");
+        File path = new File(".");
+        printFileNames(path);
     }
 
-    private static void printFileNames(String path) {
-        File dir = new File(path);
-        String[] list = dir.list();
+    private static void printFileNames(File dir) {
+        File[] files = dir.listFiles();
 
-        if (list != null) {
-            for (String name : list) {
-                File file = new File(path + "\\" + name);
-                if (file.isDirectory()) {
-                    try {
-                        printFileNames(file.getCanonicalPath());
-                    } catch (IOException e) {
-                        throw new RuntimeException("Error", e);
-                    }
-                } else {
-                    System.out.println(name);
+        if (files != null) {
+            for (File file : files) {
+                if (file.isFile()) {
+                    System.out.println("File: " + file.getName());
+                } else if (file.isDirectory()) {
+                    System.out.println("Directory: " + file.getName());
+                    printFileNames(file);
                 }
             }
         }
