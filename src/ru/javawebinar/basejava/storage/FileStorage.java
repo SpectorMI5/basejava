@@ -10,10 +10,10 @@ import java.util.Objects;
 
 public class FileStorage extends AbstractStorage<File> {
     private File directory;
-    private StreamType streamType;
+    private IOStrategy IOStrategy;
 
-    protected FileStorage(File directory, StreamType streamType) {
-        this.streamType = streamType;
+    protected FileStorage(File directory, IOStrategy IOStrategy) {
+        this.IOStrategy = IOStrategy;
         Objects.requireNonNull(directory, "directory must not be null");
 
         if (!directory.isDirectory()) {
@@ -45,28 +45,28 @@ public class FileStorage extends AbstractStorage<File> {
     }
 
     @Override
-    protected void updateResume(File file, Resume r) {
+    protected void updateResume(File file, Resume resume) {
         try {
-            streamType.doWrite(new BufferedOutputStream(new FileOutputStream(file)), r);
+            IOStrategy.doWrite(new BufferedOutputStream(new FileOutputStream(file)), resume);
         } catch (IOException e) {
             throw new StorageException("File write error", file.getName(), e);
         }
     }
 
     @Override
-    protected void saveResume(File file, Resume r) {
+    protected void saveResume(File file, Resume resume) {
         try {
             file.createNewFile();
         } catch (IOException e) {
             throw new StorageException("Couldn't create file " + file.getAbsolutePath(), file.getName(), e);
         }
-        updateResume(file, r);
+        updateResume(file, resume);
     }
 
     @Override
     protected Resume getResume(File file) {
         try {
-            return streamType.doRead(new BufferedInputStream(new FileInputStream(file)));
+            return IOStrategy.doRead(new BufferedInputStream(new FileInputStream(file)));
         } catch (IOException e) {
             throw new StorageException("File get error", file.getName(), e);
         }

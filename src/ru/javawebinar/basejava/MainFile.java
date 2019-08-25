@@ -34,10 +34,10 @@ public class MainFile {
 
         System.out.println("----------------------------");
         File path = new File(".");
-        printFileNames(path);
+        printFileNames(path, space);
     }
 
-    private static void printFileNames(File dir) {
+    private static void printFileNames(File dir, String space) {
         File[] files = dir.listFiles();
 
         if (files != null) {
@@ -46,12 +46,8 @@ public class MainFile {
                     System.out.println(space + "File: " + file.getName());
                 } else if (file.isDirectory()) {
                     System.out.println(space + "Directory: " + file.getName());
-                    space += "  ";
-                    printFileNames(file);
+                    printFileNames(file, space + "  ");
                 }
-            }
-            if (space.length() != 0) {
-                space = space.substring(0, space.length() - 2);
             }
         }
     }

@@ -14,11 +14,11 @@ import java.util.stream.Stream;
 
 public class PathStorage extends AbstractStorage<Path> {
     private Path directory;
-    private StreamType streamType;
+    private IOStrategy IOStrategy;
 
-    protected PathStorage(String dir, StreamType streamType) {
+    protected PathStorage(String dir, IOStrategy IOStrategy) {
         directory = Paths.get(dir);
-        this.streamType = streamType;
+        this.IOStrategy = IOStrategy;
         Objects.requireNonNull(directory, "directory must not be null");
 
         if (!Files.isDirectory(directory) || !Files.isWritable(directory)) {
@@ -45,28 +45,28 @@ public class PathStorage extends AbstractStorage<Path> {
     }
 
     @Override
-    protected void updateResume(Path path, Resume r) {
+    protected void updateResume(Path path, Resume resume) {
         try {
-            streamType.doWrite(new BufferedOutputStream(Files.newOutputStream(path)), r);
+            IOStrategy.doWrite(new BufferedOutputStream(Files.newOutputStream(path)), resume);
         } catch (IOException e) {
-            throw new StorageException("Path write error", r.getUuid(), e);
+            throw new StorageException("Path write error", resume.getUuid(), e);
         }
     }
 
     @Override
-    protected void saveResume(Path path, Resume r) {
+    protected void saveResume(Path path, Resume resume) {
         try {
             Files.createFile(path);
         } catch (IOException e) {
             throw new StorageException("Couldn't create path " + path, path.getFileName().toString(), e);
         }
-        updateResume(path, r);
+        updateResume(path, resume);
     }
 
     @Override
     protected Resume getResume(Path path) {
         try {
-            return streamType.doRead(new BufferedInputStream(Files.newInputStream(path)));
+            return IOStrategy.doRead(new BufferedInputStream(Files.newInputStream(path)));
         } catch (IOException e) {
             throw new StorageException("Path read error", path.getFileName().toString(), e);
         }

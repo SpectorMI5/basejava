@@ -5,7 +5,7 @@ import ru.javawebinar.basejava.model.Resume;
 
 import java.io.*;
 
-public class ObjectStream implements StreamType {
+public class SerializationStrategy implements IOStrategy {
 
     @Override
     public Resume doRead(InputStream is) throws IOException {
@@ -17,9 +17,9 @@ public class ObjectStream implements StreamType {
     }
 
     @Override
-    public void doWrite(OutputStream os, Resume r) throws IOException {
+    public void doWrite(OutputStream os, Resume resume) throws IOException {
         try (ObjectOutputStream oos = new ObjectOutputStream(os)) {
-            oos.writeObject(r);
+            oos.writeObject(resume);
         }
     }
 }
