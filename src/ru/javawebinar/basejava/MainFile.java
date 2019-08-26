@@ -5,7 +5,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 
 public class MainFile {
-    private static String space = "";
 
     public static void main(String[] args) {
         String filePath = ".\\.gitignore";
@@ -34,7 +33,7 @@ public class MainFile {
 
         System.out.println("----------------------------");
         File path = new File(".");
-        printFileNames(path, space);
+        printFileNames(path, "");
     }
 
     private static void printFileNames(File dir, String space) {
@@ -43,9 +42,9 @@ public class MainFile {
         if (files != null) {
             for (File file : files) {
                 if (file.isFile()) {
-                    System.out.println(space + "File: " + file.getName());
+                    System.out.println(space + "F: " + file.getName());
                 } else if (file.isDirectory()) {
-                    System.out.println(space + "Directory: " + file.getName());
+                    System.out.println(space + "D: " + file.getName());
                     printFileNames(file, space + "  ");
                 }
             }

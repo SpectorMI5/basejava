@@ -2,6 +2,7 @@ package ru.javawebinar.basejava.storage;
 
 import ru.javawebinar.basejava.exception.StorageException;
 import ru.javawebinar.basejava.model.Resume;
+import ru.javawebinar.basejava.storage.serializer.IOStrategy;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -10,11 +11,11 @@ import java.util.Objects;
 
 public class FileStorage extends AbstractStorage<File> {
     private File directory;
-    private IOStrategy IOStrategy;
+    private ru.javawebinar.basejava.storage.serializer.IOStrategy IOStrategy;
 
     protected FileStorage(File directory, IOStrategy IOStrategy) {
-        this.IOStrategy = IOStrategy;
         Objects.requireNonNull(directory, "directory must not be null");
+        this.IOStrategy = IOStrategy;
 
         if (!directory.isDirectory()) {
             throw new IllegalArgumentException(directory.getAbsolutePath() + " is not directory");
@@ -83,7 +84,7 @@ public class FileStorage extends AbstractStorage<File> {
     protected List<Resume> getAll() {
         File[] files = directory.listFiles();
         if (files == null) {
-            throw new StorageException("Directory is empty! getAll error", null);
+            throw new StorageException("Directory is empty! getAll error");
         }
         List<Resume> list = new ArrayList<>(files.length);
         for (File file : files) {
