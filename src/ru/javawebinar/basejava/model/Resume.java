@@ -34,12 +34,12 @@ public class Resume implements Comparable<Resume>, Serializable {
         this.fullName = fullName;
     }
 
-    public Contact getContact(ContactType contactType) {
-        return contacts.get(contactType);
+    public void addContact(ContactType contactType, Contact contact) {
+        contacts.put(contactType, contact);
     }
 
-    public AbstractSection getSection(SectionType sectionType) {
-        return sections.get(sectionType);
+    public void addSection(SectionType sectionType, AbstractSection section) {
+        sections.put(sectionType, section);
     }
 
     public String getUuid() {
@@ -50,12 +50,20 @@ public class Resume implements Comparable<Resume>, Serializable {
         return fullName;
     }
 
-    public void addContact(ContactType contactType, Contact contact) {
-        contacts.put(contactType, contact);
+    public Contact getContact(ContactType contactType) {
+        return contacts.get(contactType);
     }
 
-    public void addSection(SectionType sectionType, AbstractSection section) {
-        sections.put(sectionType, section);
+    public Map<ContactType, Contact> getContacts() {
+        return contacts;
+    }
+
+    public Map<SectionType, AbstractSection> getSections() {
+        return sections;
+    }
+
+    public AbstractSection getSection(SectionType sectionType) {
+        return sections.get(sectionType);
     }
 
     public void printResume() {
