@@ -1,16 +1,25 @@
 package ru.javawebinar.basejava.model;
 
+import ru.javawebinar.basejava.util.YearMonthAdapter;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.io.Serializable;
 import java.time.YearMonth;
 import java.util.*;
 
 import static ru.javawebinar.basejava.util.DateUtil.NOW;
 
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Organization implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    private final Link homePage;
-    private final List<OrganizationPeriod> organizationPeriods;
+    private Link homePage;
+    private List<OrganizationPeriod> organizationPeriods;
+
+    public Organization() {
+    }
 
     public Organization(String name, String url, OrganizationPeriod period) {
         this(name, url, new ArrayList<>(Collections.singletonList(period)));
@@ -48,11 +57,17 @@ public class Organization implements Serializable {
         return "\n" + homePage + "\n" + organizationPeriods;
     }
 
+    @XmlAccessorType(XmlAccessType.FIELD)
     public static class OrganizationPeriod implements Serializable {
-        private final YearMonth startDate;
-        private final YearMonth endDate;
-        private final String title;
-        private final String description;
+        @XmlJavaTypeAdapter(YearMonthAdapter.class)
+        private YearMonth startDate;
+        @XmlJavaTypeAdapter(YearMonthAdapter.class)
+        private YearMonth endDate;
+        private String title;
+        private String description;
+
+        public OrganizationPeriod() {
+        }
 
         public OrganizationPeriod(YearMonth startDate, String title, String description) {
             this(startDate, NOW, title, description);

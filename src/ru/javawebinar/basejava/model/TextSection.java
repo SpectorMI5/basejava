@@ -1,26 +1,22 @@
 package ru.javawebinar.basejava.model;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Objects;
 
-public class MarkedListSection extends AbstractSection {
+public class TextSection extends AbstractSection {
     private static final long serialVersionUID = 1L;
 
-    private List<String> text;
+    private String text;
 
-    public MarkedListSection(String titleOfSection, String... text) {
-        this(titleOfSection, new ArrayList<>(Arrays.asList(text)));
+    public TextSection() {
     }
 
-    public MarkedListSection(String titleOfSection, ArrayList<String> text) {
+    public TextSection(String titleOfSection, String text) {
         Objects.requireNonNull(text, "text must not be null");
         this.titleOfSection = titleOfSection;
         this.text = text;
     }
 
-    public List<String> getText() {
+    public String getText() {
         return text;
     }
 
@@ -29,7 +25,7 @@ public class MarkedListSection extends AbstractSection {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        MarkedListSection that = (MarkedListSection) o;
+        TextSection that = (TextSection) o;
 
         return text.equals(that.text);
     }

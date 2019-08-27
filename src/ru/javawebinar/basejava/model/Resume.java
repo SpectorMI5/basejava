@@ -1,19 +1,27 @@
 package ru.javawebinar.basejava.model;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
+@XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Resume implements Comparable<Resume>, Serializable {
     private static final long serialVersionUID = 1L;
 
-    private final String uuid;
-    private final String fullName;
+    private String uuid;
+    private String fullName;
 
     private final Map<ContactType, Contact> contacts = new EnumMap<>(ContactType.class);
     private final Map<SectionType, AbstractSection> sections = new EnumMap<>(SectionType.class);
+
+    public Resume() {
+    }
 
     public Resume(String fullName) {
         this(UUID.randomUUID().toString(), fullName);
@@ -59,22 +67,16 @@ public class Resume implements Comparable<Resume>, Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         Resume resume = (Resume) o;
-
-        if (!uuid.equals(resume.uuid)) return false;
-        if (!fullName.equals(resume.fullName)) return false;
-        if (!contacts.equals(resume.contacts)) return false;
-        return sections.equals(resume.sections);
+        return Objects.equals(uuid, resume.uuid) &&
+                Objects.equals(fullName, resume.fullName) &&
+                Objects.equals(contacts, resume.contacts) &&
+                Objects.equals(sections, resume.sections);
     }
 
     @Override
     public int hashCode() {
-        int result = uuid.hashCode();
-        result = 31 * result + fullName.hashCode();
-        result = 31 * result + contacts.hashCode();
-        result = 31 * result + sections.hashCode();
-        return result;
+        return Objects.hash(uuid, fullName, contacts, sections);
     }
 
     @Override
