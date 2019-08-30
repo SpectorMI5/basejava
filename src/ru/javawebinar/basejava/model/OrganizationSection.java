@@ -23,6 +23,10 @@ public class OrganizationSection extends AbstractSection {
         this.organizations = organizations;
     }
 
+    public String getTitle() {
+        return titleOfSection;
+    }
+
     public List<Organization> getOrganizations() {
         return organizations;
     }

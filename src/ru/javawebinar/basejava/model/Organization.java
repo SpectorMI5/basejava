@@ -34,6 +34,14 @@ public class Organization implements Serializable {
         this.organizationPeriods = organizationPeriods;
     }
 
+    public Link getLink() {
+        return homePage;
+    }
+
+    public List<OrganizationPeriod> getPeriods() {
+        return organizationPeriods;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -63,6 +71,7 @@ public class Organization implements Serializable {
         private YearMonth startDate;
         @XmlJavaTypeAdapter(YearMonthAdapter.class)
         private YearMonth endDate;
+
         private String title;
         private String description;
 
@@ -81,6 +90,22 @@ public class Organization implements Serializable {
             this.endDate = endDate;
             this.title = title;
             this.description = description;
+        }
+
+        public YearMonth getStartDate() {
+            return startDate;
+        }
+
+        public YearMonth getEndDate() {
+            return endDate;
+        }
+
+        public String getTitle() {
+            return title;
+        }
+
+        public String getDescription() {
+            return description;
         }
 
         @Override

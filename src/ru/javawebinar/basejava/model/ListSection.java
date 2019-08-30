@@ -23,6 +23,10 @@ public class ListSection extends AbstractSection {
         this.text = text;
     }
 
+    public String getTitle() {
+        return titleOfSection;
+    }
+
     public List<String> getText() {
         return text;
     }
