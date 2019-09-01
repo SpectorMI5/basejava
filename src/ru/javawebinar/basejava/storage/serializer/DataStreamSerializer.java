@@ -8,8 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static ru.javawebinar.basejava.model.SectionType.*;
-
 public class DataStreamSerializer implements IOStrategy {
 
     @Override
@@ -32,42 +30,55 @@ public class DataStreamSerializer implements IOStrategy {
                 dos.writeUTF(sectionType.name());
 
                 AbstractSection section = entry.getValue();
-                if (sectionType.equals(OBJECTIVE) || sectionType.equals(PERSONAL)) {
-                    dos.writeUTF(((TextSection) section).getTitle());
-                    dos.writeUTF(((TextSection) section).getText());
-                }
-                if (sectionType.equals(ACHIEVEMENT) || sectionType.equals(QUALIFICATIONS)) {
-                    dos.writeUTF(((ListSection) section).getTitle());
-                    List<String> list = ((ListSection) section).getText();
-                    dos.writeInt(list.size());
-                    for (String string : list) {
-                        dos.writeUTF(string);
-                    }
-                }
-                if (sectionType.equals(EXPERIENCE) || sectionType.equals(EDUCATION)) {
-                    dos.writeUTF(((OrganizationSection) section).getTitle());
-                    List<Organization> list = ((OrganizationSection) section).getOrganizations();
-                    dos.writeInt(list.size());
-                    for (Organization organization : list) {
-                        Link link = organization.getLink();
-                        dos.writeUTF(link.getName());
-                        dos.writeUTF(link.getUrl());
-                        List<Organization.OrganizationPeriod> organizationPeriods = organization.getPeriods();
-                        dos.writeInt(organizationPeriods.size());
-                        for (Organization.OrganizationPeriod organizationPeriod : organizationPeriods) {
-                            YearMonth startDate = organizationPeriod.getStartDate();
-                            dos.writeInt(startDate.getYear());
-                            dos.writeInt(startDate.getMonthValue());
-                            YearMonth endDate = organizationPeriod.getEndDate();
-                            dos.writeInt(endDate.getYear());
-                            dos.writeInt(endDate.getMonthValue());
-                            dos.writeUTF(organizationPeriod.getTitle());
-                            dos.writeUTF(organizationPeriod.getDescription());
+                switch (sectionType) {
+                    case OBJECTIVE:
+                    case PERSONAL:
+                        dos.writeUTF(((TextSection) section).getText());
+                        break;
+                    case ACHIEVEMENT:
+                    case QUALIFICATIONS:
+                        List<String> list = ((ListSection) section).getText();
+                        dos.writeInt(list.size());
+                        for (String string : list) {
+                            dos.writeUTF(string);
                         }
-                    }
+                        break;
+                    case EXPERIENCE:
+                    case EDUCATION:
+                        List<Organization> organizations = ((OrganizationSection) section).getOrganizations();
+                        dos.writeInt(organizations.size());
+                        for (Organization organization : organizations) {
+                            Link link = organization.getLink();
+                            dos.writeUTF(link.getName());
+                            if (link.getUrl() != null) {
+                                dos.writeInt(1);
+                                dos.writeUTF(link.getUrl());
+                            } else {
+                                dos.writeInt(0);
+                            }
+                            List<Organization.OrganizationPeriod> organizationPeriods = organization.getPeriods();
+                            dos.writeInt(organizationPeriods.size());
+                            for (Organization.OrganizationPeriod organizationPeriod : organizationPeriods) {
+                                writeDate(dos, organizationPeriod.getStartDate());
+                                writeDate(dos, organizationPeriod.getEndDate());
+                                dos.writeUTF(organizationPeriod.getTitle());
+                                if (organizationPeriod.getDescription() != null) {
+                                    dos.writeInt(1);
+                                    dos.writeUTF(organizationPeriod.getDescription());
+                                } else {
+                                    dos.writeInt(0);
+                                }
+                            }
+                        }
+                        break;
                 }
             }
         }
+    }
+
+    private void writeDate(DataOutputStream dos, YearMonth date) throws IOException {
+        dos.writeInt(date.getYear());
+        dos.writeInt(date.getMonthValue());
     }
 
     @Override
@@ -91,34 +102,53 @@ public class DataStreamSerializer implements IOStrategy {
     }
 
     private AbstractSection readSection(DataInputStream dis, SectionType sectionType) throws IOException {
-        if (sectionType.equals(OBJECTIVE) || sectionType.equals(PERSONAL)) {
-            return new TextSection(dis.readUTF(), dis.readUTF());
-        }
-        if (sectionType.equals(ACHIEVEMENT) || sectionType.equals(QUALIFICATIONS)) {
-            String title = dis.readUTF();
-            int size = dis.readInt();
-            ArrayList<String> list = new ArrayList<>();
-            for (int i = 0; i < size; i++) {
-                list.add(dis.readUTF());
-            }
-            return new ListSection(title, list);
-        } else {
-            String title = dis.readUTF();
-            int size = dis.readInt();
-            ArrayList<Organization> organizations = new ArrayList<>(size);
-            for (int i = 0; i < size; i++) {
-                String name = dis.readUTF();
-                String url = dis.readUTF();
-                int numberOfPeriods = dis.readInt();
-                ArrayList<Organization.OrganizationPeriod> organizationPeriods = new ArrayList<>(numberOfPeriods);
-                for (int n = 0; n < numberOfPeriods; n++) {
-                    YearMonth startDate = YearMonth.of(dis.readInt(), dis.readInt());
-                    YearMonth endDate = YearMonth.of(dis.readInt(), dis.readInt());
-                    organizationPeriods.add(new Organization.OrganizationPeriod(startDate, endDate, dis.readUTF(), dis.readUTF()));
+        switch (sectionType) {
+            case OBJECTIVE:
+            case PERSONAL:
+                return new TextSection(dis.readUTF());
+            case ACHIEVEMENT:
+            case QUALIFICATIONS:
+                int size = dis.readInt();
+                ArrayList<String> list = new ArrayList<>();
+                for (int i = 0; i < size; i++) {
+                    list.add(dis.readUTF());
                 }
-                organizations.add(new Organization(name, url, organizationPeriods));
-            }
-            return new OrganizationSection(title, organizations);
+                return new ListSection(list);
+            case EXPERIENCE:
+            case EDUCATION:
+                int numberOfOrganizations = dis.readInt();
+                ArrayList<Organization> organizations = new ArrayList<>(numberOfOrganizations);
+                for (int i = 0; i < numberOfOrganizations; i++) {
+                    String name = dis.readUTF();
+                    String url;
+                    if (dis.readInt() == 1) {
+                        url = dis.readUTF();
+                    } else {
+                        url = null;
+                    }
+                    int numberOfPeriods = dis.readInt();
+                    ArrayList<Organization.OrganizationPeriod> organizationPeriods = new ArrayList<>(numberOfPeriods);
+                    for (int n = 0; n < numberOfPeriods; n++) {
+                        YearMonth startDate = readDate(dis);
+                        YearMonth endDate = readDate(dis);
+                        String title = dis.readUTF();
+                        String description;
+                        if (dis.readInt() == 1) {
+                            description = dis.readUTF();
+                        } else {
+                            description = null;
+                        }
+                        organizationPeriods.add(new Organization.OrganizationPeriod(startDate, endDate, title, description));
+                    }
+                    organizations.add(new Organization(name, url, organizationPeriods));
+                }
+                return new OrganizationSection(organizations);
+            default:
+                throw new IllegalArgumentException("Section Type Error!");
         }
+    }
+
+    private YearMonth readDate(DataInputStream dis) throws IOException {
+        return YearMonth.of(dis.readInt(), dis.readInt());
     }
 }

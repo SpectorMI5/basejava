@@ -13,18 +13,13 @@ public class ListSection extends AbstractSection {
     public ListSection() {
     }
 
-    public ListSection(String titleOfSection, String... text) {
-        this(titleOfSection, new ArrayList<>(Arrays.asList(text)));
+    public ListSection(String... text) {
+        this(new ArrayList<>(Arrays.asList(text)));
     }
 
-    public ListSection(String titleOfSection, ArrayList<String> text) {
+    public ListSection(ArrayList<String> text) {
         Objects.requireNonNull(text, "text must not be null");
-        this.titleOfSection = titleOfSection;
         this.text = text;
-    }
-
-    public String getTitle() {
-        return titleOfSection;
     }
 
     public List<String> getText() {
@@ -48,6 +43,6 @@ public class ListSection extends AbstractSection {
 
     @Override
     public String toString() {
-        return "\n\n" + titleOfSection + "\n" + text;
+        return "\n\n" + text;
     }
 }

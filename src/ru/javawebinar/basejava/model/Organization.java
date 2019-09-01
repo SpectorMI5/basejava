@@ -21,10 +21,6 @@ public class Organization implements Serializable {
     public Organization() {
     }
 
-    public Organization(String name, String url, OrganizationPeriod period) {
-        this(name, url, new ArrayList<>(Collections.singletonList(period)));
-    }
-
     public Organization(String name, String url, OrganizationPeriod... periods) {
         this(name, url, new ArrayList<>(Arrays.asList(periods)));
     }

@@ -13,18 +13,13 @@ public class OrganizationSection extends AbstractSection {
     public OrganizationSection() {
     }
 
-    public OrganizationSection(String titleOfSection, Organization... organizations) {
-        this(titleOfSection, new ArrayList<>(Arrays.asList(organizations)));
+    public OrganizationSection(Organization... organizations) {
+        this(new ArrayList<>(Arrays.asList(organizations)));
     }
 
-    public OrganizationSection(String titleOfSection, ArrayList<Organization> organizations) {
+    public OrganizationSection(ArrayList<Organization> organizations) {
         Objects.requireNonNull(organizations, "organizations must not be null");
-        this.titleOfSection = titleOfSection;
         this.organizations = organizations;
-    }
-
-    public String getTitle() {
-        return titleOfSection;
     }
 
     public List<Organization> getOrganizations() {
@@ -48,6 +43,6 @@ public class OrganizationSection extends AbstractSection {
 
     @Override
     public String toString() {
-        return "\n\n" + titleOfSection + organizations;
+        return "\n\n" + organizations;
     }
 }

@@ -16,10 +16,10 @@ public class ResumeTestData {
         Contact skype = new Contact("grigory.kislin");
         Contact email = new Contact("gkislin@yandex.ru");
 
-        AbstractSection objective = new TextSection("Позиция", "Ведущий стажировок и корпоративного " +
+        AbstractSection objective = new TextSection("Ведущий стажировок и корпоративного " +
                 "обучения по Java Web и Enterprise технологиям");
 
-        AbstractSection personal = new TextSection("Личные качества", "Аналитический склад ума, сильная " +
+        AbstractSection personal = new TextSection("Аналитический склад ума, сильная " +
                 "логика, креативность, инициативность. Пурист кода и архитектуры.");
 
         String text_1 = "С 2013 года: разработка проектов \"Разработка Web приложения\", \"Java Enterprise\", \"Многомодульный " +
@@ -48,7 +48,7 @@ public class ResumeTestData {
         Organization.OrganizationPeriod period_2 = new Organization.OrganizationPeriod(startDate_2, endDate_2, title_2, description_2);
         Organization organization_2 = new Organization(organizationName_2, url_2, period_2);
 
-        AbstractSection experience = new OrganizationSection("Опыт работы", organization_1, organization_2);
+        AbstractSection experience = new OrganizationSection(organization_1, organization_2);
 
         String organizationName_3 = "Coursera";
         String url_3 = "https://www.coursera.org/learn/progfun1";
@@ -79,7 +79,7 @@ public class ResumeTestData {
         Organization.OrganizationPeriod period_6 = new Organization.OrganizationPeriod(startDate_6, endDate_6, title_6, "");
         Organization organization_5 = new Organization(organizationName_5, url_5, period_5, period_6);
 
-        AbstractSection education = new OrganizationSection("Образование", organization_3, organization_4, organization_5);
+        AbstractSection education = new OrganizationSection(organization_3, organization_4, organization_5);
 
         resume.addContact(PHONE_NUMBER, phoneNumber);
         resume.addContact(SKYPE, skype);
