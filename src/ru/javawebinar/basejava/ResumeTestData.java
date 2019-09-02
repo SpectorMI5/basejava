@@ -25,11 +25,11 @@ public class ResumeTestData {
         String text_1 = "С 2013 года: разработка проектов \"Разработка Web приложения\", \"Java Enterprise\", \"Многомодульный " +
                 "maven. Многопоточность.";
         String text_2 = "Реализация двухфакторной аутентификации для онлайн платформы управления проектами Wrike.";
-        AbstractSection achievement = new ListSection("Достижения", text_1, text_2);
+        AbstractSection achievement = new ListSection(text_1, text_2);
 
         String text_3 = "JEE AS: GlassFish (v2.1, v3), OC4J, JBoss, Tomcat, Jetty, WebLogic, WSO2";
         String text_4 = "Version control: Subversion, Git, Mercury, ClearCase, Perforce";
-        AbstractSection qualifications = new ListSection("Квалификация", text_3, text_4);
+        AbstractSection qualifications = new ListSection(text_3, text_4);
 
         String organizationName_1 = "Java Online Projects";
         String url_1 = "http://javaops.ru/";

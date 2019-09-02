@@ -5,6 +5,7 @@ import ru.javawebinar.basejava.model.*;
 import java.io.*;
 import java.time.YearMonth;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -17,19 +18,15 @@ public class DataStreamSerializer implements IOStrategy {
             dos.writeUTF(r.getFullName());
 
             Map<ContactType, Contact> contacts = r.getContacts();
-            dos.writeInt(contacts.size());
-            for (Map.Entry<ContactType, Contact> entry : contacts.entrySet()) {
+            writeCollection(dos, contacts.entrySet(), entry -> {
                 dos.writeUTF(entry.getKey().name());
                 dos.writeUTF(entry.getValue().getContact());
-            }
+            });
 
-            Map<SectionType, AbstractSection> sections = r.getSections();
-            dos.writeInt(sections.size());
-            for (Map.Entry<SectionType, AbstractSection> entry : sections.entrySet()) {
+            writeCollection(dos, r.getSections().entrySet(), entry -> {
                 SectionType sectionType = entry.getKey();
-                dos.writeUTF(sectionType.name());
-
                 AbstractSection section = entry.getValue();
+                dos.writeUTF(sectionType.name());
                 switch (sectionType) {
                     case OBJECTIVE:
                     case PERSONAL:
@@ -37,48 +34,24 @@ public class DataStreamSerializer implements IOStrategy {
                         break;
                     case ACHIEVEMENT:
                     case QUALIFICATIONS:
-                        List<String> list = ((ListSection) section).getText();
-                        dos.writeInt(list.size());
-                        for (String string : list) {
-                            dos.writeUTF(string);
-                        }
+                        writeCollection(dos, ((ListSection) section).getText(), dos::writeUTF);
                         break;
                     case EXPERIENCE:
                     case EDUCATION:
-                        List<Organization> organizations = ((OrganizationSection) section).getOrganizations();
-                        dos.writeInt(organizations.size());
-                        for (Organization organization : organizations) {
-                            Link link = organization.getLink();
-                            dos.writeUTF(link.getName());
-                            if (link.getUrl() != null) {
-                                dos.writeInt(1);
-                                dos.writeUTF(link.getUrl());
-                            } else {
-                                dos.writeInt(0);
-                            }
-                            List<Organization.OrganizationPeriod> organizationPeriods = organization.getPeriods();
-                            dos.writeInt(organizationPeriods.size());
-                            for (Organization.OrganizationPeriod organizationPeriod : organizationPeriods) {
-                                writeDate(dos, organizationPeriod.getStartDate());
-                                writeDate(dos, organizationPeriod.getEndDate());
-                                dos.writeUTF(organizationPeriod.getTitle());
-                                if (organizationPeriod.getDescription() != null) {
-                                    dos.writeInt(1);
-                                    dos.writeUTF(organizationPeriod.getDescription());
-                                } else {
-                                    dos.writeInt(0);
-                                }
-                            }
-                        }
+                        writeCollection(dos, ((OrganizationSection) section).getOrganizations(), org -> {
+                            dos.writeUTF(org.getLink().getName());
+                            dos.writeUTF(org.getLink().getUrl());
+                            writeCollection(dos, org.getPeriods(), period -> {
+                                writeDate(dos, period.getStartDate());
+                                writeDate(dos, period.getEndDate());
+                                dos.writeUTF(period.getTitle());
+                                dos.writeUTF(period.getDescription());
+                            });
+                        });
                         break;
                 }
-            }
+            });
         }
-    }
-
-    private void writeDate(DataOutputStream dos, YearMonth date) throws IOException {
-        dos.writeInt(date.getYear());
-        dos.writeInt(date.getMonthValue());
     }
 
     @Override
@@ -87,16 +60,11 @@ public class DataStreamSerializer implements IOStrategy {
             String uuid = dis.readUTF();
             String fullName = dis.readUTF();
             Resume resume = new Resume(uuid, fullName);
-            int size = dis.readInt();
-            for (int i = 0; i < size; i++) {
-                resume.addContact(ContactType.valueOf(dis.readUTF()), new Contact(dis.readUTF()));
-            }
-
-            int numberOfSections = dis.readInt();
-            for (int i = 0; i < numberOfSections; i++) {
+            readItems(dis, () -> resume.addContact(ContactType.valueOf(dis.readUTF()), new Contact(dis.readUTF())));
+            readItems(dis, () -> {
                 SectionType sectionType = SectionType.valueOf(dis.readUTF());
                 resume.addSection(sectionType, readSection(dis, sectionType));
-            }
+            });
             return resume;
         }
     }
@@ -108,41 +76,16 @@ public class DataStreamSerializer implements IOStrategy {
                 return new TextSection(dis.readUTF());
             case ACHIEVEMENT:
             case QUALIFICATIONS:
-                int size = dis.readInt();
-                ArrayList<String> list = new ArrayList<>();
-                for (int i = 0; i < size; i++) {
-                    list.add(dis.readUTF());
-                }
-                return new ListSection(list);
+                return new ListSection(readList(dis, dis::readUTF));
             case EXPERIENCE:
             case EDUCATION:
-                int numberOfOrganizations = dis.readInt();
-                ArrayList<Organization> organizations = new ArrayList<>(numberOfOrganizations);
-                for (int i = 0; i < numberOfOrganizations; i++) {
-                    String name = dis.readUTF();
-                    String url;
-                    if (dis.readInt() == 1) {
-                        url = dis.readUTF();
-                    } else {
-                        url = null;
-                    }
-                    int numberOfPeriods = dis.readInt();
-                    ArrayList<Organization.OrganizationPeriod> organizationPeriods = new ArrayList<>(numberOfPeriods);
-                    for (int n = 0; n < numberOfPeriods; n++) {
-                        YearMonth startDate = readDate(dis);
-                        YearMonth endDate = readDate(dis);
-                        String title = dis.readUTF();
-                        String description;
-                        if (dis.readInt() == 1) {
-                            description = dis.readUTF();
-                        } else {
-                            description = null;
-                        }
-                        organizationPeriods.add(new Organization.OrganizationPeriod(startDate, endDate, title, description));
-                    }
-                    organizations.add(new Organization(name, url, organizationPeriods));
-                }
-                return new OrganizationSection(organizations);
+                return new OrganizationSection(
+                        readList(dis, () -> new Organization(
+                                new Link(dis.readUTF(), dis.readUTF()),
+                                readList(dis, () -> new Organization.OrganizationPeriod(
+                                        readDate(dis), readDate(dis), dis.readUTF(), dis.readUTF()
+                                ))
+                        )));
             default:
                 throw new IllegalArgumentException("Section Type Error!");
         }
@@ -150,5 +93,45 @@ public class DataStreamSerializer implements IOStrategy {
 
     private YearMonth readDate(DataInputStream dis) throws IOException {
         return YearMonth.of(dis.readInt(), dis.readInt());
+    }
+
+    private void writeDate(DataOutputStream dos, YearMonth date) throws IOException {
+        dos.writeInt(date.getYear());
+        dos.writeInt(date.getMonthValue());
+    }
+
+    private interface ElementProcessor {
+        void process() throws IOException;
+    }
+
+    private interface ElementReader<T> {
+        T read() throws IOException;
+    }
+
+    private interface ElementWriter<T> {
+        void write(T t) throws IOException;
+    }
+
+    private void readItems(DataInputStream dis, ElementProcessor processor) throws IOException {
+        int size = dis.readInt();
+        for (int i = 0; i < size; i++) {
+            processor.process();
+        }
+    }
+
+    private <T> List<T> readList(DataInputStream dis, ElementReader<T> reader) throws IOException {
+        int size = dis.readInt();
+        List<T> list = new ArrayList<>(size);
+        for (int i = 0; i < size; i++) {
+            list.add(reader.read());
+        }
+        return list;
+    }
+
+    private <T> void writeCollection(DataOutputStream dos, Collection<T> collection, ElementWriter<T> writer) throws IOException {
+        dos.writeInt(collection.size());
+        for (T item : collection) {
+            writer.write(item);
+        }
     }
 }

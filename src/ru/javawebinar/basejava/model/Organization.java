@@ -16,7 +16,7 @@ public class Organization implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private Link homePage;
-    private List<OrganizationPeriod> organizationPeriods;
+    private List<OrganizationPeriod> periods = new ArrayList<>();
 
     public Organization() {
     }
@@ -25,9 +25,14 @@ public class Organization implements Serializable {
         this(name, url, new ArrayList<>(Arrays.asList(periods)));
     }
 
-    public Organization(String name, String url, ArrayList<OrganizationPeriod> organizationPeriods) {
+    public Organization(Link homePage, List<OrganizationPeriod> periods) {
+        this.homePage = homePage;
+        this.periods = periods;
+    }
+
+    public Organization(String name, String url, ArrayList<OrganizationPeriod> periods) {
         this.homePage = new Link(name, url);
-        this.organizationPeriods = organizationPeriods;
+        this.periods = periods;
     }
 
     public Link getLink() {
@@ -35,7 +40,7 @@ public class Organization implements Serializable {
     }
 
     public List<OrganizationPeriod> getPeriods() {
-        return organizationPeriods;
+        return periods;
     }
 
     @Override
@@ -46,19 +51,19 @@ public class Organization implements Serializable {
         Organization that = (Organization) o;
 
         if (!homePage.equals(that.homePage)) return false;
-        return organizationPeriods.equals(that.organizationPeriods);
+        return periods.equals(that.periods);
     }
 
     @Override
     public int hashCode() {
         int result = homePage.hashCode();
-        result = 31 * result + organizationPeriods.hashCode();
+        result = 31 * result + periods.hashCode();
         return result;
     }
 
     @Override
     public String toString() {
-        return "\n" + homePage + "\n" + organizationPeriods;
+        return "\n" + homePage + "\n" + periods;
     }
 
     @XmlAccessorType(XmlAccessType.FIELD)
@@ -114,7 +119,7 @@ public class Organization implements Serializable {
             if (!startDate.equals(organizationPeriod.startDate)) return false;
             if (!endDate.equals(organizationPeriod.endDate)) return false;
             if (!title.equals(organizationPeriod.title)) return false;
-            return description != null ? description.equals(organizationPeriod.description) : organizationPeriod.description == null;
+            return Objects.equals(description, organizationPeriod.description);
         }
 
         @Override
