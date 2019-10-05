@@ -37,13 +37,7 @@ public class Streams_HW12 {
         int sum = IntStream.of(integers.stream().mapToInt(i -> i).toArray())
                 .sum();
         return integers.stream()
-                .filter(x -> {
-                    if (sum % 2 == 0) {
-                        return x % 2 == 1;
-                    } else {
-                        return x % 2 == 0;
-                    }
-                })
+                .filter(x -> sum % 2 != x % 2)
                 .collect(Collectors.toList());
     }
 }
