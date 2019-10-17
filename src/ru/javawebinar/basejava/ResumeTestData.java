@@ -81,7 +81,7 @@ public class ResumeTestData {
 
         AbstractSection education = new OrganizationSection(organization_3, organization_4, organization_5);
 
-        resume.addContact(PHONE_NUMBER, phoneNumber);
+        /*resume.addContact(PHONE_NUMBER, phoneNumber);
         resume.addContact(SKYPE, skype);
         resume.addContact(EMAIL, email);
 
@@ -90,7 +90,7 @@ public class ResumeTestData {
         resume.addSection(ACHIEVEMENT, achievement);
         resume.addSection(QUALIFICATIONS, qualifications);
         resume.addSection(EXPERIENCE, experience);
-        resume.addSection(EDUCATION, education);
+        resume.addSection(EDUCATION, education);*/
 
         return resume;
     }
