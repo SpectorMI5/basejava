@@ -103,7 +103,7 @@ public class SqlStorage implements Storage {
                     while (rs.next()) {
                         String uuid = rs.getString("uuid");
                         String fullName = rs.getString("full_name");
-                        map.computeIfAbsent(uuid, resume -> createResume(uuid, fullName));
+                        map.computeIfAbsent(uuid, resume -> new Resume(uuid, fullName));
                         if (rs.getString("value") != null) {
                             Resume resume = map.get(uuid);
                             addContact(rs, resume);
@@ -141,9 +141,5 @@ public class SqlStorage implements Storage {
                 ps.executeBatch();
             }
         }
-    }
-
-    private static Resume createResume(String uuid, String fullName) {
-        return new Resume(uuid, fullName);
     }
 }
