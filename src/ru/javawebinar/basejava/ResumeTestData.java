@@ -85,11 +85,11 @@ public class ResumeTestData {
         resume.addContact(SKYPE, skype);
         resume.addContact(EMAIL, email);
 
-        /*resume.addSection(OBJECTIVE, objective);
+        resume.addSection(OBJECTIVE, objective);
         resume.addSection(PERSONAL, personal);
         resume.addSection(ACHIEVEMENT, achievement);
         resume.addSection(QUALIFICATIONS, qualifications);
-        resume.addSection(EXPERIENCE, experience);
+        /*resume.addSection(EXPERIENCE, experience);
         resume.addSection(EDUCATION, education);*/
 
         return resume;
