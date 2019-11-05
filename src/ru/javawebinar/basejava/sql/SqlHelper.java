@@ -2,6 +2,7 @@ package ru.javawebinar.basejava.sql;
 
 import ru.javawebinar.basejava.exception.StorageException;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -23,7 +24,10 @@ public class SqlHelper {
             return executor.execute(ps);
         } catch (SQLException e) {
             throw ExceptionUtil.convertException(e);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+        return null;
     }
 
     public <T> T transactionalExecute(SqlTransaction<T> executor) {

@@ -3,6 +3,7 @@ package ru.javawebinar.basejava.storage;
 import ru.javawebinar.basejava.exception.NotExistStorageException;
 import ru.javawebinar.basejava.model.*;
 import ru.javawebinar.basejava.sql.SqlHelper;
+import ru.javawebinar.basejava.util.JsonParser;
 
 import java.sql.*;
 import java.util.*;
@@ -144,13 +145,7 @@ public class SqlStorage implements Storage {
         String content = rs.getString("content");
         if (content != null) {
             String type = rs.getString("type");
-            AbstractSection section;
-            if (type.equals("Позиция") || type.equals("Личные качества")) {
-                section = new TextSection(content);
-            } else {
-                section = new ListSection(content);
-            }
-            resume.addSection(SectionType.valueOf(rs.getString("type")), section);
+            resume.addSection(SectionType.valueOf(type), JsonParser.read(content, AbstractSection.class));
         }
     }
 
@@ -181,7 +176,7 @@ public class SqlStorage implements Storage {
                 for (Map.Entry<SectionType, AbstractSection> e : resume.getSections().entrySet()) {
                     ps.setString(1, resume.getUuid());
                     ps.setString(2, e.getKey().name());
-                    ps.setString(3, e.getValue());
+                    ps.setString(3, JsonParser.write(e.getValue(), AbstractSection.class));
                     ps.addBatch();
                 }
                 ps.executeBatch();
