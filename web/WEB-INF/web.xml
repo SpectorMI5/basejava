@@ -14,12 +14,12 @@
     </servlet-mapping>
 
     <servlet>
-        <servlet-name>tableResumeServlet</servlet-name>
-        <servlet-class>ru.javawebinar.basejava.web.TableResumeServlet</servlet-class>
+        <servlet-name>resumesTableServlet</servlet-name>
+        <servlet-class>ru.javawebinar.basejava.web.ResumesTableServlet</servlet-class>
     </servlet>
     <servlet-mapping>
-        <servlet-name>tableResumeServlet</servlet-name>
-        <url-pattern>/table_resume</url-pattern>
+        <servlet-name>resumesTableServlet</servlet-name>
+        <url-pattern>/resumes_table</url-pattern>
     </servlet-mapping>
 
 </web-app>
