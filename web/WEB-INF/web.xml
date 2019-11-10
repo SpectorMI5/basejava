@@ -13,13 +13,4 @@
         <url-pattern>/resume</url-pattern>
     </servlet-mapping>
 
-    <servlet>
-        <servlet-name>resumesTableServlet</servlet-name>
-        <servlet-class>ru.javawebinar.basejava.web.ResumesTableServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>resumesTableServlet</servlet-name>
-        <url-pattern>/resumes_table</url-pattern>
-    </servlet-mapping>
-
 </web-app>
