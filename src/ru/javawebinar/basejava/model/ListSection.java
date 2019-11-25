@@ -1,9 +1,6 @@
 package ru.javawebinar.basejava.model;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class ListSection extends AbstractSection {
     private static final long serialVersionUID = 1L;
@@ -24,6 +21,14 @@ public class ListSection extends AbstractSection {
 
     public List<String> getText() {
         return text;
+    }
+
+    public List<String> getTextWithoutSlash() {
+        List<String> list = new LinkedList<>();
+        for (String string : text) {
+            list.add(string.replace("\"", "'"));
+        }
+        return list;
     }
 
     @Override

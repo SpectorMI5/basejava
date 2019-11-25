@@ -23,7 +23,7 @@ public class ResumeTestData {
                 "логика, креативность, инициативность. Пурист кода и архитектуры.");
 
         String text_1 = "С 2013 года: разработка проектов \"Разработка Web приложения\", \"Java Enterprise\", \"Многомодульный " +
-                "maven. Многопоточность.";
+                "maven. Многопоточность\".";
         String text_2 = "Реализация двухфакторной аутентификации для онлайн платформы управления проектами Wrike.";
         AbstractSection achievement = new ListSection(text_1, text_2);
 
@@ -89,8 +89,8 @@ public class ResumeTestData {
         resume.addSection(PERSONAL, personal);
         resume.addSection(ACHIEVEMENT, achievement);
         resume.addSection(QUALIFICATIONS, qualifications);
-        /*resume.addSection(EXPERIENCE, experience);
-        resume.addSection(EDUCATION, education);*/
+        resume.addSection(EXPERIENCE, experience);
+        resume.addSection(EDUCATION, education);
 
         return resume;
     }

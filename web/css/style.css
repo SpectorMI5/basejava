@@ -1,10 +1,10 @@
 section {
-    width: 900px;
+    width: 940px;
     margin: auto;
 }
 
 header {
-    background: none repeat scroll 0 0 #A6C9E2;
+    background: none repeat scroll 0 0 #00CED1;
     color: #2E6E9E;
     font-size: 20px;
     padding: 5px 20px;
@@ -12,7 +12,7 @@ header {
 }
 
 footer {
-    background: none repeat scroll 0 0 #A6C9E2;
+    background: none repeat scroll 0 0 #00CED1;
     color: #2E6E9E;
     font-size: 20px;
     padding: 5px 20px;
@@ -21,7 +21,7 @@ footer {
 }
 
 dl {
-    background: none repeat scroll 0 0 #FAFAFA;
+    background: none repeat scroll 0 0 #FFE4C4;
     margin: 8px 0;
     padding: 0;
 }

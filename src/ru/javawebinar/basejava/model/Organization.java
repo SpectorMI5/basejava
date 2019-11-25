@@ -135,5 +135,32 @@ public class Organization implements Serializable {
         public String toString() {
             return "\n" + startDate + " - " + endDate + "   " + title + "\n" + description;
         }
+
+        public List<String> periodToHtml() {
+            List<String> strings = new LinkedList<>();
+            strings.add(getStartDate().toString());
+            if (getEndDate().equals(NOW)) {
+                strings.add("По настоящее время");
+            } else {
+                strings.add(getEndDate().toString());
+            }
+            strings.add("<br/>");
+            strings.add(getTitle());
+            strings.add(getDescription());
+            return strings;
+        }
+
+        public Map<String, String> periodToMap() {
+            Map<String, String> strings = new LinkedHashMap<>();
+            strings.put("Дата начала", getStartDate().toString());
+            if (getEndDate().equals(NOW)) {
+                strings.put("Дата окончания", "По настоящее время");
+            } else {
+                strings.put("Дата окончания", getEndDate().toString());
+            }
+            strings.put("Заголовок", getTitle().replace("\"", "'"));
+            strings.put("Описание", getDescription().replace("\"", "'"));
+            return strings;
+        }
     }
 }
