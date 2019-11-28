@@ -22,8 +22,8 @@ public class ResumeTestData {
         AbstractSection personal = new TextSection("Аналитический склад ума, сильная " +
                 "логика, креативность, инициативность. Пурист кода и архитектуры.");
 
-        String text_1 = "С 2013 года: разработка проектов \"Разработка Web приложения\", \"Java Enterprise\", \"Многомодульный " +
-                "maven. Многопоточность\".";
+        String text_1 = "С 2013 года: разработка проектов 'Разработка Web приложения', 'Java Enterprise', 'Многомодульный " +
+                "maven. Многопоточность'.";
         String text_2 = "Реализация двухфакторной аутентификации для онлайн платформы управления проектами Wrike.";
         AbstractSection achievement = new ListSection(text_1, text_2);
 
@@ -54,7 +54,7 @@ public class ResumeTestData {
         String url_3 = "https://www.coursera.org/learn/progfun1";
         YearMonth startDate_3 = YearMonth.of(2013, 3);
         YearMonth endDate_3 = YearMonth.of(2013, 5);
-        String title_3 = "\"Functional Programming Principles in Scala\" by Martin Odersky";
+        String title_3 = "'Functional Programming Principles in Scala' by Martin Odersky";
         Organization.OrganizationPeriod period_3 = new Organization.OrganizationPeriod(startDate_3, endDate_3, title_3, "");
         Organization organization_3 = new Organization(organizationName_3, url_3, period_3);
 
@@ -63,7 +63,7 @@ public class ResumeTestData {
                 "_dlya_sistemnyh_analitikov_.html";
         YearMonth startDate_4 = YearMonth.of(2011, 3);
         YearMonth endDate_4 = YearMonth.of(2011, 4);
-        String title_4 = "Курс \"Объектно-ориентированный анализ ИС. Концептуальное моделирование на UML.\"";
+        String title_4 = "Курс 'Объектно-ориентированный анализ ИС. Концептуальное моделирование на UML.'";
         Organization.OrganizationPeriod period_4 = new Organization.OrganizationPeriod(startDate_4, endDate_4, title_4, "");
         Organization organization_4 = new Organization(organizationName_4, url_4, period_4);
 

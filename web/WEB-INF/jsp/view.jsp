@@ -32,7 +32,11 @@
                     <c:when test="${type=='ACHIEVEMENT' || type=='QUALIFICATIONS'}">
                         <b><dl>${sectionEntry.key.title}</dl></b>
                         <c:forEach var="string" items="<%=((ListSection) section).getText()%>">
-                            ${string}
+                        <ul>
+                            <li>
+                                ${string}
+                            </li>
+                        </ul>
                         </c:forEach><p>
                     </c:when>
                     <c:when test="${type=='EXPERIENCE' || type=='EDUCATION'}">
@@ -45,6 +49,7 @@
                                     ${string}
                                     </c:forEach><p>
                             </c:forEach>
+                            <hr>
                         </c:forEach>
                     </c:when>
                 </c:choose>

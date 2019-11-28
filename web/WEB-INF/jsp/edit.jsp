@@ -1,6 +1,7 @@
 <%@ page import="ru.javawebinar.basejava.model.ContactType" %>
 <%@ page import="ru.javawebinar.basejava.model.ListSection" %>
 <%@ page import="ru.javawebinar.basejava.model.OrganizationSection" %>
+<%@ page import="ru.javawebinar.basejava.model.SectionType" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html>
@@ -19,6 +20,7 @@
             <b><dt>Имя:</dt></b>
             <dd><input type="text" name="fullName" size=50 value="${resume.fullName}"></dd>
         </dl>
+
         <h3>Контакты:</h3>
         <c:forEach var="type" items="<%=ContactType.values()%>">
             <dl>
@@ -26,37 +28,49 @@
                 <dd><input type="text" name="${type.name()}" size=30 value="${resume.getContact(type)}"></dd>
             </dl>
         </c:forEach>
-        <h3>Секции:</h3>
+
+        <br><h3 style="margin-top: 0px">Секции:</h3>
+        <table border="1" align="center" cellpadding="5" cellspacing="5">
+            <tr>
+                <c:forEach var="type" items="<%=SectionType.values()%>">
+                    <td>
+                        ${type.title}
+                        <a href="resume?uuid=${resume.uuid}&section type=${type}&action=add section"><img src="img/add.png"></a>
+                        <a href="resume?uuid=${resume.uuid}&section type=${type}&action=delete section"><img src="img/delete.png"></a>
+                    </td>
+                </c:forEach>
+            </tr>
+        </table>
+
         <c:forEach var="sectionEntry" items="${resume.sections}">
             <jsp:useBean id="sectionEntry"
                         type="java.util.Map.Entry<ru.javawebinar.basejava.model.SectionType, ru.javawebinar.basejava.model.AbstractSection>"/>
             <c:set var="type" value="${sectionEntry.key}"/>
             <c:set var="section" value="${sectionEntry.value}"/>
             <jsp:useBean id="section" type="ru.javawebinar.basejava.model.AbstractSection"/>
+            <dl>
+                <b>${type.title}</b>
+            </dl>
+
             <c:choose>
             <c:when test="${type=='OBJECTIVE' || type=='PERSONAL'}">
                 <dl>
-                    <b><dt>${type.title}</dt></b>
-                    <dd><input type="text" name="${type.name()}" size=113 value="${resume.getSection(type)}"></dd>
+                    <dd style="margin-left: 0px"><input type="text" name="${type.name()}" size=142 value="${resume.getSection(type)}"></dd>
                 </dl>
             </c:when>
 
             <c:when test="${type=='ACHIEVEMENT' || type=='QUALIFICATIONS'}">
-                <b>
-                    <dl>${sectionEntry.key.title}</dl>
-                </b>
-                <c:forEach var="string" items="<%=((ListSection) section).getTextWithoutSlash()%>">
+                <c:forEach var="string" items="<%=((ListSection) section).getText()%>">
                     <dl>
-                        <dd style="margin-left: 0px"><input type="text" name="${type.name()}" size=142 value="${string}"></dd>
+                        <dd style="margin-left: 0px"><input type="text" name="${type.title}/${string}" size=138 value="${string}"></dd>
+                        <a href="resume?uuid=${resume.uuid}&section type=${type}&string=${string}&action=delete string"><img src="img/delete.png"></a>
                     </dl>
                 </c:forEach>
+                <a href="resume?uuid=${resume.uuid}&section type=${type}&action=add string"><img src="img/add.png"></a>
                 <p>
             </c:when>
 
             <c:when test="${type=='EXPERIENCE' || type=='EDUCATION'}">
-                <b>
-                    <dl>${sectionEntry.key.title}</dl>
-                </b>
                 <c:forEach var="organization" items="<%=((OrganizationSection) section).getOrganizations()%>">
                     <dl>
                         <dt style="margin-bottom: 8px">Название организации</dt>
@@ -93,6 +107,7 @@
                 </c:forEach>
             </c:when>
             </c:choose>
+
         </c:forEach>
         <button type="submit">Сохранить</button>
         <button onclick="window.history.back()">Отменить</button>

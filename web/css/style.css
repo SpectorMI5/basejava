@@ -41,10 +41,6 @@ h2, h3 {
     margin: 15px 0 5px;
 }
 
-li {
-    margin: 15px 0;
-}
-
 a[href^="skype:"] {
     padding-left: 20px !important;
     background: url(../img/skype.png) no-repeat center left;

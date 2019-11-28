@@ -23,21 +23,11 @@ public class ListSection extends AbstractSection {
         return text;
     }
 
-    public List<String> getTextWithoutSlash() {
-        List<String> list = new LinkedList<>();
-        for (String string : text) {
-            list.add(string.replace("\"", "'"));
-        }
-        return list;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         ListSection that = (ListSection) o;
-
         return text.equals(that.text);
     }
 
