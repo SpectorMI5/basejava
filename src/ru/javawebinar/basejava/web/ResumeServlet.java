@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.YearMonth;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -52,12 +53,10 @@ public class ResumeServlet extends HttpServlet {
                         break;
                     case ACHIEVEMENT:
                     case QUALIFICATIONS:
-                        List<String> stringList = ((ListSection) r.getSection(type)).getText();
                         List<String> strings = new LinkedList<>();
-                        for (String s : stringList) {
-                            String str = request.getParameter(type.getTitle() + "/" + s);
-                            if (str != null && str.trim().length() != 0) {
-                                strings.add(str);
+                        for (String s : request.getParameter(type.name()).split("\r\n")) {
+                            if (s != null && s.trim().length() != 0) {
+                                strings.add(s);
                             }
                         }
                         if (!strings.isEmpty()) {
@@ -68,31 +67,32 @@ public class ResumeServlet extends HttpServlet {
                         break;
                     case EXPERIENCE:
                     case EDUCATION:
-                    /*List<Organization> organizations = new LinkedList<>();
-                    List<Organization> organizationList = ((OrganizationSection) r.getSection(type)).getOrganizations();
-                    for (Organization organization : organizationList) {
-                        String name = request.getParameter("Название организации");
-                        String url = request.getParameter("url организации");
-                        Link homePage = new Link(name, url);
-                        List<Organization.OrganizationPeriod> periods = new LinkedList<>();
-                        int n = organization.getPeriods().size();
-                        for (int i = 0; i < n; i++) {
-                            Organization.OrganizationPeriod period;
-                            YearMonth startDate = YearMonth.parse(request.getParameter("Дата начала"));
-                            String title = request.getParameter("Заголовок");
-                            String description = request.getParameter("Описание");
-                            String end = request.getParameter("Дата окончания");
-                            if (end.equals("По настоящее время") || end.equals("")) {
-                                period = new Organization.OrganizationPeriod(startDate, title, description);
-                            } else {
-                                YearMonth endDate = YearMonth.parse(end);
-                                period = new Organization.OrganizationPeriod(startDate, endDate, title, description);
+                        List<Organization> organizations = new LinkedList<>();
+                        List<Organization> organizationList = ((OrganizationSection) r.getSection(type)).getOrganizations();
+                        for (Organization organization : organizationList) {
+                            String organizationName = organization.getLink().getName();
+                            String name = request.getParameter(organizationName);
+                            String url = request.getParameter(organization.getLink().getUrl());
+                            Link homePage = new Link(name, url);
+                            List<Organization.OrganizationPeriod> periods = new LinkedList<>();
+                            for (Organization.OrganizationPeriod organizationPeriod : organization.getPeriods()) {
+                                Organization.OrganizationPeriod period;
+                                String s = organizationName + "-" + organizationPeriod.getTitle() + "-";
+                                YearMonth startDate = YearMonth.parse(request.getParameter(s + "Дата начала"));
+                                String title = request.getParameter(s + "Заголовок");
+                                String description = request.getParameter(s + "Описание");
+                                String end = request.getParameter(s + "Дата окончания");
+                                if (end.equals("По настоящее время") || end.equals("")) {
+                                    period = new Organization.OrganizationPeriod(startDate, title, description);
+                                } else {
+                                    YearMonth endDate = YearMonth.parse(end);
+                                    period = new Organization.OrganizationPeriod(startDate, endDate, title, description);
+                                }
+                                periods.add(period);
                             }
-                            periods.add(period);
+                            organizations.add(new Organization(homePage, periods));
                         }
-                        organizations.add(new Organization(homePage, periods));
-                    }
-                    r.addSection(type, new OrganizationSection(organizations));*/
+                        r.addSection(type, new OrganizationSection(organizations));
                         break;
                 }
             }
@@ -112,24 +112,20 @@ public class ResumeServlet extends HttpServlet {
         }
         Resume r = storage.get(uuid);
         SectionType sectionType;
+        String organizationName;
+        List<Organization> organizations;
+        int index;
         switch (action) {
-            case "delete resume":
-                storage.delete(uuid);
-                response.sendRedirect("resume");
-                return;
-            case "delete section":
+            case "add organization":
                 sectionType = setSectionType(sectionTypeString);
-                r.getSections().remove(sectionType);
+                ((OrganizationSection) r.getSection(sectionType)).getOrganizations().add(new Organization());
                 storage.update(r);
                 response.sendRedirect("resume?uuid=" + uuid + "&action=edit");
                 return;
-            case "delete string":
+            case "add period":
+                organizationName = request.getParameter("organization name");
                 sectionType = setSectionType(sectionTypeString);
-                String string = request.getParameter("string");
-                ((ListSection) r.getSection(sectionType)).getText().remove(string);
-                if (((ListSection) r.getSection(sectionType)).getText().isEmpty()) {
-                    r.getSections().remove(sectionType);
-                }
+                createPeriod(((OrganizationSection) r.getSection(sectionType)).getOrganizations(), organizationName);
                 storage.update(r);
                 response.sendRedirect("resume?uuid=" + uuid + "&action=edit");
                 return;
@@ -142,10 +138,33 @@ public class ResumeServlet extends HttpServlet {
                 }
                 response.sendRedirect("resume?uuid=" + uuid + "&action=edit");
                 return;
-            case "add string":
+            case "delete organization":
+                organizationName = request.getParameter("organization name");
                 sectionType = setSectionType(sectionTypeString);
-                String str = "" + (((ListSection) r.getSection(sectionType)).getText().size() + 1);
-                ((ListSection) r.getSection(sectionType)).getText().add(str);
+                organizations = ((OrganizationSection) r.getSection(sectionType)).getOrganizations();
+                index = getIndexOfOrganization(organizations, organizationName);
+                if (index >= 0) {
+                    organizations.remove(index);
+                }
+                storage.update(r);
+                response.sendRedirect("resume?uuid=" + uuid + "&action=edit");
+                return;
+            case "delete period":
+                organizationName = request.getParameter("organization name");
+                String periodTitle = request.getParameter("period title");
+                sectionType = setSectionType(sectionTypeString);
+                organizations = ((OrganizationSection) r.getSection(sectionType)).getOrganizations();
+                deletePeriod(request, organizations, organizationName, periodTitle);
+                storage.update(r);
+                response.sendRedirect("resume?uuid=" + uuid + "&action=edit");
+                return;
+            case "delete resume":
+                storage.delete(uuid);
+                response.sendRedirect("resume");
+                return;
+            case "delete section":
+                sectionType = setSectionType(sectionTypeString);
+                r.getSections().remove(sectionType);
                 storage.update(r);
                 response.sendRedirect("resume?uuid=" + uuid + "&action=edit");
                 return;
@@ -159,6 +178,48 @@ public class ResumeServlet extends HttpServlet {
         request.getRequestDispatcher(
                 ("view".equals(action) ? "/WEB-INF/jsp/view.jsp" : "/WEB-INF/jsp/edit.jsp")
         ).forward(request, response);
+    }
+
+    private void createPeriod(List<Organization> organizations, String organizationName) {
+        for (Organization organization : organizations) {
+            if (organization.getLink().getName().equals(organizationName)) {
+                organization.getPeriods().add(new Organization.OrganizationPeriod(YearMonth.now(), YearMonth.now(), "", ""));
+            }
+        }
+    }
+
+    private AbstractSection createSection(SectionType sectionType) {
+        switch (sectionType) {
+            case OBJECTIVE:
+            case PERSONAL:
+                return new TextSection("");
+            case ACHIEVEMENT:
+            case QUALIFICATIONS:
+                return new ListSection("");
+            case EXPERIENCE:
+            case EDUCATION:
+                return new OrganizationSection();
+            default:
+                throw new IllegalArgumentException("SectionType " + sectionType + " is illegal");
+        }
+    }
+
+    private void deletePeriod(HttpServletRequest request, List<Organization> organizations, String organizationName, String periodTitle) {
+        for (Organization organization : organizations) {
+            if (organization.getLink().getName().equals(organizationName)) {
+                organization.getPeriods().removeIf(period -> period.getTitle().equals(periodTitle));
+                break;
+            }
+        }
+    }
+
+    private int getIndexOfOrganization(List<Organization> organizations, String organizationName) {
+        for (Organization organization : organizations) {
+            if (organization.getLink().getName().equals(organizationName)) {
+                return organizations.indexOf(organization);
+            }
+        }
+        return -1;
     }
 
     private SectionType setSectionType(String sectionType) {
@@ -175,22 +236,6 @@ public class ResumeServlet extends HttpServlet {
                 return EXPERIENCE;
             case "EDUCATION":
                 return EDUCATION;
-            default:
-                throw new IllegalArgumentException("SectionType " + sectionType + " is illegal");
-        }
-    }
-
-    private AbstractSection createSection(SectionType sectionType) {
-        switch (sectionType) {
-            case OBJECTIVE:
-            case PERSONAL:
-                return new TextSection("");
-            case ACHIEVEMENT:
-            case QUALIFICATIONS:
-                return new ListSection("");
-            case EXPERIENCE:
-            case EDUCATION:
-                return new OrganizationSection();
             default:
                 throw new IllegalArgumentException("SectionType " + sectionType + " is illegal");
         }
