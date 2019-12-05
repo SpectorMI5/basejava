@@ -68,25 +68,24 @@ public class ResumeServlet extends HttpServlet {
                     case EXPERIENCE:
                     case EDUCATION:
                         List<Organization> organizations = new LinkedList<>();
-                        List<Organization> organizationList = ((OrganizationSection) r.getSection(type)).getOrganizations();
-                        for (Organization organization : organizationList) {
-                            String organizationName = organization.getLink().getName();
-                            String name = request.getParameter(organizationName);
-                            String url = request.getParameter(organization.getLink().getUrl());
-                            Link homePage = new Link(name, url);
+                        String[] organizationNames = request.getParameterValues(type.name());
+                        for (String organizationName : organizationNames) {
+                            String newName = request.getParameter("/" + organizationName);
+                            String url = request.getParameter(organizationName + ".url");
+                            Link homePage = new Link(newName, url);
                             List<Organization.OrganizationPeriod> periods = new LinkedList<>();
-                            for (Organization.OrganizationPeriod organizationPeriod : organization.getPeriods()) {
+                            String[] periodsTitle = request.getParameterValues("Заголовок-" + organizationName);
+                            String[] periodsDescription = request.getParameterValues("Описание-" + organizationName);
+                            String[] periodsStartDate = request.getParameterValues("Дата начала-" + organizationName);
+                            String[] periodsEndDate = request.getParameterValues("Дата окончания-" + organizationName);
+                            for (int i = 0; i < periodsTitle.length; i++) {
                                 Organization.OrganizationPeriod period;
-                                String s = organizationName + "-" + organizationPeriod.getTitle() + "-";
-                                YearMonth startDate = YearMonth.parse(request.getParameter(s + "Дата начала"));
-                                String title = request.getParameter(s + "Заголовок");
-                                String description = request.getParameter(s + "Описание");
-                                String end = request.getParameter(s + "Дата окончания");
-                                if (end.equals("По настоящее время") || end.equals("")) {
-                                    period = new Organization.OrganizationPeriod(startDate, title, description);
+                                if (periodsEndDate[i].equals("По настоящее время") || periodsEndDate[i].equals("")) {
+                                    period = new Organization.OrganizationPeriod(YearMonth.parse(periodsStartDate[i]),
+                                            periodsTitle[i], periodsDescription[i]);
                                 } else {
-                                    YearMonth endDate = YearMonth.parse(end);
-                                    period = new Organization.OrganizationPeriod(startDate, endDate, title, description);
+                                    period = new Organization.OrganizationPeriod(YearMonth.parse(periodsStartDate[i]),
+                                            YearMonth.parse(periodsEndDate[i]), periodsTitle[i], periodsDescription[i]);
                                 }
                                 periods.add(period);
                             }
@@ -146,6 +145,9 @@ public class ResumeServlet extends HttpServlet {
                 if (index >= 0) {
                     organizations.remove(index);
                 }
+                if (organizations.isEmpty()) {
+                    r.getSections().remove(sectionType);
+                }
                 storage.update(r);
                 response.sendRedirect("resume?uuid=" + uuid + "&action=edit");
                 return;
@@ -198,7 +200,8 @@ public class ResumeServlet extends HttpServlet {
                 return new ListSection("");
             case EXPERIENCE:
             case EDUCATION:
-                return new OrganizationSection();
+                return new OrganizationSection(new Organization("", "", new Organization.OrganizationPeriod(YearMonth.now(),
+                        YearMonth.now(), "", "")));
             default:
                 throw new IllegalArgumentException("SectionType " + sectionType + " is illegal");
         }

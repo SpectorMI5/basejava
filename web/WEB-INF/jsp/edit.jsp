@@ -78,9 +78,10 @@
                         <dt style="margin-bottom: 8px">
                             Название организации<a href="resume?uuid=${resume.uuid}&section type=${type}&organization name=${name}&action=delete organization"><img src="img/delete.png"></a>
                         </dt>
-                        <dd><input type="text" name="${name}" size=113 value="${organization.link.name}"></dd>
+                        <input type="hidden" name="${type.name()}" value="${name}">
+                        <dd><input type="text" name="/${name}" size=113 value="${name}"></dd>
                         <dt>url организации</dt>
-                        <dd><input type="text" name="${organization.link.url}" size=113 value="${organization.link.url}"></dd>
+                        <dd><input type="text" name="${name}.url" size=113 value="${organization.link.url}"></dd>
                     </dl>
                     <c:forEach var="period" items="${organization.periods}">
                         <dl>
@@ -99,16 +100,16 @@
                                 </dt>
                                 <c:choose>
                                     <c:when test="${fieldName.equals('Дата начала')}">
-                                        <dd><input type="text" name="${name}-${period.title}-${fieldName}" size=113 value="${value}"></dd>
+                                        <dd><input type="text" name="${fieldName}-${name}" size=113 value="${value}"></dd>
                                     </c:when>
                                     <c:when test="${fieldName.equals('Дата окончания')}">
-                                        <dd><input type="text" name="${name}-${period.title}-${fieldName}" size=113 value="${value}"></dd>
+                                        <dd><input type="text" name="${fieldName}-${name}" size=113 value="${value}"></dd>
                                     </c:when>
                                     <c:when test="${fieldName.equals('Заголовок')}">
-                                        <dd><input type="text" name="${name}-${period.title}-${fieldName}" size=113 value="${value}"></dd>
+                                        <dd><input type="text" name="${fieldName}-${name}" size=113 value="${value}"></dd>
                                     </c:when>
                                     <c:when test="${fieldName.equals('Описание')}">
-                                        <dd><input type="text" name="${name}-${period.title}-${fieldName}" size=113 value="${value}"></dd>
+                                        <dd><input type="text" name="${fieldName}-${name}" size=113 value="${value}"></dd>
                                     </c:when>
                                 </c:choose>
                             </c:forEach>
@@ -119,8 +120,8 @@
                 </c:forEach>
             </c:when>
             </c:choose>
-
         </c:forEach>
+
         <button type="submit">Сохранить</button>
         <button onclick="window.history.back()">Отменить</button>
     </form>
