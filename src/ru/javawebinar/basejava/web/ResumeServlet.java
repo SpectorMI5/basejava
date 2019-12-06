@@ -14,7 +14,7 @@ import java.time.YearMonth;
 import java.util.LinkedList;
 import java.util.List;
 
-import static ru.javawebinar.basejava.model.SectionType.*;
+import static ru.javawebinar.basejava.model.ContactType.EMAIL;
 
 public class ResumeServlet extends HttpServlet {
     private Storage storage = Config.get().getStorage();
@@ -109,27 +109,39 @@ public class ResumeServlet extends HttpServlet {
             request.getRequestDispatcher("/WEB-INF/jsp/list.jsp").forward(request, response);
             return;
         }
-        Resume r = storage.get(uuid);
+        Resume r;
+        //Т.к. при создании нового Resume в request не передается uuid, то необходимо условие, которое создаст новое резюме
+        if (uuid != null) {
+            r = storage.get(uuid);
+        } else {
+            r = new Resume("newFullName");
+            r.addContact(EMAIL, new Contact("@"));
+        }
         SectionType sectionType;
         String organizationName;
         List<Organization> organizations;
         int index;
         switch (action) {
             case "add organization":
-                sectionType = setSectionType(sectionTypeString);
-                ((OrganizationSection) r.getSection(sectionType)).getOrganizations().add(new Organization());
+                sectionType = SectionType.valueOf(sectionTypeString);
+                ((OrganizationSection) r.getSection(sectionType)).getOrganizations().add(new Organization("", "",
+                        new Organization.OrganizationPeriod(YearMonth.now(), YearMonth.now(), "", "")));
                 storage.update(r);
                 response.sendRedirect("resume?uuid=" + uuid + "&action=edit");
                 return;
             case "add period":
                 organizationName = request.getParameter("organization name");
-                sectionType = setSectionType(sectionTypeString);
+                sectionType = SectionType.valueOf(sectionTypeString);
                 createPeriod(((OrganizationSection) r.getSection(sectionType)).getOrganizations(), organizationName);
                 storage.update(r);
                 response.sendRedirect("resume?uuid=" + uuid + "&action=edit");
                 return;
+            case "add resume":
+                storage.save(r);
+                response.sendRedirect("resume");
+                return;
             case "add section":
-                sectionType = setSectionType(sectionTypeString);
+                sectionType = SectionType.valueOf(sectionTypeString);
                 if (!r.getSections().containsKey(sectionType)) {
                     AbstractSection abstractSection = createSection(sectionType);
                     r.addSection(sectionType, abstractSection);
@@ -139,7 +151,7 @@ public class ResumeServlet extends HttpServlet {
                 return;
             case "delete organization":
                 organizationName = request.getParameter("organization name");
-                sectionType = setSectionType(sectionTypeString);
+                sectionType = SectionType.valueOf(sectionTypeString);
                 organizations = ((OrganizationSection) r.getSection(sectionType)).getOrganizations();
                 index = getIndexOfOrganization(organizations, organizationName);
                 if (index >= 0) {
@@ -154,7 +166,7 @@ public class ResumeServlet extends HttpServlet {
             case "delete period":
                 organizationName = request.getParameter("organization name");
                 String periodTitle = request.getParameter("period title");
-                sectionType = setSectionType(sectionTypeString);
+                sectionType = SectionType.valueOf(sectionTypeString);
                 organizations = ((OrganizationSection) r.getSection(sectionType)).getOrganizations();
                 deletePeriod(request, organizations, organizationName, periodTitle);
                 storage.update(r);
@@ -165,7 +177,7 @@ public class ResumeServlet extends HttpServlet {
                 response.sendRedirect("resume");
                 return;
             case "delete section":
-                sectionType = setSectionType(sectionTypeString);
+                sectionType = SectionType.valueOf(sectionTypeString);
                 r.getSections().remove(sectionType);
                 storage.update(r);
                 response.sendRedirect("resume?uuid=" + uuid + "&action=edit");
@@ -217,30 +229,11 @@ public class ResumeServlet extends HttpServlet {
     }
 
     private int getIndexOfOrganization(List<Organization> organizations, String organizationName) {
-        for (Organization organization : organizations) {
-            if (organization.getLink().getName().equals(organizationName)) {
-                return organizations.indexOf(organization);
+        for (int i = 0; i < organizations.size(); i++) {
+            if (organizations.get(i).getLink().getName().equals(organizationName)) {
+                return i;
             }
         }
         return -1;
-    }
-
-    private SectionType setSectionType(String sectionType) {
-        switch (sectionType) {
-            case "OBJECTIVE":
-                return OBJECTIVE;
-            case "PERSONAL":
-                return PERSONAL;
-            case "ACHIEVEMENT":
-                return ACHIEVEMENT;
-            case "QUALIFICATIONS":
-                return QUALIFICATIONS;
-            case "EXPERIENCE":
-                return EXPERIENCE;
-            case "EDUCATION":
-                return EDUCATION;
-            default:
-                throw new IllegalArgumentException("SectionType " + sectionType + " is illegal");
-        }
     }
 }

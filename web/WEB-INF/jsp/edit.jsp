@@ -41,6 +41,7 @@
                 </c:forEach>
             </tr>
         </table>
+        <hr>
 
         <c:forEach var="sectionEntry" items="${resume.sections}">
             <jsp:useBean id="sectionEntry"
@@ -94,7 +95,7 @@
                                     ${fieldName}
                                     <c:choose>
                                         <c:when test="${fieldName.equals('Дата начала')}">
-                                            <a href="resume?uuid=${resume.uuid}&section type=${type}&organization name=${name}&period title=${period.title}&action=delete period"><img src="img/delete.png"></a>
+                                            <a href="resume?uuid=${resume.uuid}&section type=${type}&organization name=${name}&period title=${period.title.replace('+', '%2B')}&action=delete period"><img src="img/delete.png"></a>
                                         </c:when>
                                     </c:choose>
                                 </dt>
