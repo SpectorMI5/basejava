@@ -28,7 +28,7 @@
             </tr>
         </c:forEach>
         <tr>
-            <td><a href="resume?action=add resume"><img src="img/add.png"></a></td>
+            <td><a href="resume?uuid=new uuid&action=add resume"><img src="img/add.png"></a></td>
             <td></td>
             <td></td>
             <td></td>

@@ -10,11 +10,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.time.YearMonth;
 import java.util.LinkedList;
 import java.util.List;
-
-import static ru.javawebinar.basejava.model.ContactType.EMAIL;
 
 public class ResumeServlet extends HttpServlet {
     private Storage storage = Config.get().getStorage();
@@ -32,6 +31,9 @@ public class ResumeServlet extends HttpServlet {
         r.setFullName(fullName);
         for (ContactType type : ContactType.values()) {
             String value = request.getParameter(type.name());
+            if (type == ContactType.EMAIL && value.equals("")) {
+                value = "@";
+            }
             if (value != null && value.trim().length() != 0) {
                 r.addContact(type, new Contact(value));
             } else {
@@ -101,6 +103,7 @@ public class ResumeServlet extends HttpServlet {
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        request.setCharacterEncoding("UTF-8");
         String uuid = request.getParameter("uuid");
         String action = request.getParameter("action");
         String sectionTypeString = request.getParameter("section type");
@@ -109,13 +112,9 @@ public class ResumeServlet extends HttpServlet {
             request.getRequestDispatcher("/WEB-INF/jsp/list.jsp").forward(request, response);
             return;
         }
-        Resume r;
-        //Т.к. при создании нового Resume в request не передается uuid, то необходимо условие, которое создаст новое резюме
-        if (uuid != null) {
+        Resume r = new Resume();
+        if (!uuid.equals("new uuid")) {
             r = storage.get(uuid);
-        } else {
-            r = new Resume("newFullName");
-            r.addContact(EMAIL, new Contact("@"));
         }
         SectionType sectionType;
         String organizationName;
@@ -137,8 +136,10 @@ public class ResumeServlet extends HttpServlet {
                 response.sendRedirect("resume?uuid=" + uuid + "&action=edit");
                 return;
             case "add resume":
+                r = new Resume("");
+                //r.addContact(EMAIL, new Contact("@"));
                 storage.save(r);
-                response.sendRedirect("resume");
+                response.sendRedirect("resume?uuid=" + r.getUuid() + "&action=edit");
                 return;
             case "add section":
                 sectionType = SectionType.valueOf(sectionTypeString);
@@ -165,7 +166,8 @@ public class ResumeServlet extends HttpServlet {
                 return;
             case "delete period":
                 organizationName = request.getParameter("organization name");
-                String periodTitle = request.getParameter("period title");
+                //String periodTitle = request.getParameter("period title");
+                String periodTitle = URLEncoder.encode(request.getParameter("period title"), "UTF-8");
                 sectionType = SectionType.valueOf(sectionTypeString);
                 organizations = ((OrganizationSection) r.getSection(sectionType)).getOrganizations();
                 deletePeriod(request, organizations, organizationName, periodTitle);
