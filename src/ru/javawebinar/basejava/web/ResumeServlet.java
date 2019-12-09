@@ -10,7 +10,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.net.URLEncoder;
 import java.time.YearMonth;
 import java.util.LinkedList;
 import java.util.List;
@@ -103,7 +102,6 @@ public class ResumeServlet extends HttpServlet {
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        request.setCharacterEncoding("UTF-8");
         String uuid = request.getParameter("uuid");
         String action = request.getParameter("action");
         String sectionTypeString = request.getParameter("section type");
@@ -137,7 +135,6 @@ public class ResumeServlet extends HttpServlet {
                 return;
             case "add resume":
                 r = new Resume("");
-                //r.addContact(EMAIL, new Contact("@"));
                 storage.save(r);
                 response.sendRedirect("resume?uuid=" + r.getUuid() + "&action=edit");
                 return;
@@ -166,8 +163,7 @@ public class ResumeServlet extends HttpServlet {
                 return;
             case "delete period":
                 organizationName = request.getParameter("organization name");
-                //String periodTitle = request.getParameter("period title");
-                String periodTitle = URLEncoder.encode(request.getParameter("period title"), "UTF-8");
+                String periodTitle = request.getParameter("period title");
                 sectionType = SectionType.valueOf(sectionTypeString);
                 organizations = ((OrganizationSection) r.getSection(sectionType)).getOrganizations();
                 deletePeriod(request, organizations, organizationName, periodTitle);
