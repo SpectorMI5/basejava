@@ -22,7 +22,14 @@
             <jsp:useBean id="resume" type="ru.javawebinar.basejava.model.Resume"/>
             <tr>
                 <td><a href="resume?uuid=${resume.uuid}&action=view">${resume.fullName}</a></td>
-                <td><%=ContactType.EMAIL.toHtml(resume.getContact(ContactType.EMAIL).getContact())%></td>
+                <c:choose>
+                    <c:when test="<%=resume.getContact(ContactType.EMAIL)!=null%>">
+                        <td><%=ContactType.EMAIL.toHtml(resume.getContact(ContactType.EMAIL).getContact())%></td>
+                    </c:when>
+                    <c:when test="<%=resume.getContact(ContactType.EMAIL)==null%>">
+                        <td><%=ContactType.EMAIL.getTitle()%></td>
+                    </c:when>
+                </c:choose>
                 <td><a href="resume?uuid=${resume.uuid}&action=delete resume"><img src="img/delete.png"></a></td>
                 <td><a href="resume?uuid=${resume.uuid}&action=edit"><img src="img/pencil.png"></a></td>
             </tr>
